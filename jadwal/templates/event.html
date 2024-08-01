@@ -35,13 +35,33 @@
                                     <td class="description" style="text-align: justify;">{{ event.deskripsi }}</td>
                                     {% if user.is_superuser %}
                                         <td>{{ event.id_tempat }}</td>
-                                    {% endif %}
-                                    {% if event.status == "disetujui" %}
-                                        <td class="approved"><p>{{ event.status }}</p></td>
-                                    {% elif event.status == "ditolak" %}
-                                        <td class="denied"><p>{{ event.status }}</p></td>
-                                    {% elif event.status == "diproses" %}
-                                        <td class="process"><p>{{ event.status }}</p></td>
+                                        {% if event.status == "disetujui" %}
+                                            <td>
+                                                <button type="button" class="btn btn-success btn-disetujui"
+                                                data-bs-toggle="modal" data-bs-target="#EditStatus{{ event.id }}"
+                                                data-bs-whatever="@mdo">{{ event.status }}</button>
+                                            </td>
+                                        {% elif event.status == "ditolak" %}
+                                            <td>
+                                                <button type="button" class="btn btn-danger btn-ditolak"
+                                                data-bs-toggle="modal" data-bs-target="#EditStatus{{ event.id }}"
+                                                data-bs-whatever="@mdo">{{ event.status }}</button>
+                                            </td>
+                                        {% elif event.status == "diproses" %}
+                                            <td>
+                                                <button type="button" style="color: white;" class="btn btn-warning btn-diproses"
+                                                data-bs-toggle="modal" data-bs-target="#EditStatus{{ event.id }}"
+                                                data-bs-whatever="@mdo">{{ event.status }}</button>
+                                            </td>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if event.status == "disetujui" %}
+                                            <td class="approved"><p>{{ event.status }}</p></td>
+                                        {% elif event.status == "ditolak" %}
+                                            <td class="denied"><p>{{ event.status }}</p></td>
+                                        {% elif event.status == "diproses" %}
+                                            <td class="process"><p>{{ event.status }}</p></td>
+                                        {% endif %}
                                     {% endif %}
                                     <td style="text-align: center; width: 20%;">
                                         <button type="button" class="btn btn-primary btn-edit"
@@ -234,6 +254,42 @@
         {% endfor %}
         <!-- Batas Modal Edit Event -->
 
+        <!-- Modal Edit Status -->
+        {% for event in event_list %}
+        <div class="modal fade" id="EditStatus{{ event.id }}" tabindex="-1" aria-labelledby="EditStatuslabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="EditStatuslabel">Edit Status</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editStatusForm{{ event.id }}" data-event-id="{{ event.id }}">
+                            {% csrf_token %}
+                            <input type="hidden" name="id_tempat" value="{{ event.id_tempat.id }}">
+                            <input type="hidden" name="nama" value="{{ event.nama }}">
+                            <input type="hidden" name="tanggal_mulai" value="{{ event.tanggal_mulai|date:'Y-m-d' }}">
+                            <input type="hidden" name="jam_mulai" value="{{ event.tanggal_mulai|date:'H:i' }}">
+                            <input type="hidden" name="tanggal_selesai" value="{{ event.tanggal_selesai|date:'Y-m-d' }}">
+                            <input type="hidden" name="jam_selesai" value="{{ event.tanggal_selesai|date:'H:i' }}">
+                            <input type="hidden" name="deskripsi" value="{{ event.deskripsi }}">
+                            <select id="status" class="form-select" name="status" required>
+                                <option selected disabled value="">Pilih...</option>
+                                <option value="diproses">Diproses</option>
+                                <option value="disetujui">Disetujui</option>
+                                <option value="ditolak">Ditolak</option>
+                            </select>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <!-- Batas Modal Edit Status -->
     </div>
 
 <!-- SweetAlert2 JavaScript -->
@@ -324,6 +380,51 @@
                     Swal.fire({
                         title: "Gagal!",
                         text: "Terjadi kesalahan saat mengedit event.",
+                        icon: "error",
+                        confirmButtonColor: 'red',
+                        iconColor: 'red'
+                    });
+                }
+            });
+        });
+    });
+
+    // Pop Up Edit Status
+    document.querySelectorAll('[id^="editStatusForm"]').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const eventId = this.getAttribute('data-event-id');
+            const formData = new FormData(this);
+
+            fetch(`{% url 'edit_status' 0 %}`.replace('0', eventId), {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    Swal.fire({
+                        title: "Sukses!",
+                        text: data.message,
+                        icon: "success",
+                        confirmButtonColor: 'red',
+                    }).then(() => {
+                        const modalId = `EditStatus${eventId}`;
+                        const myModal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+                        if (myModal) {
+                            myModal.hide();
+                        }
+                        location.reload(); // Reload the page to update the status list
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Gagal!",
+                        text: "Terjadi kesalahan saat mengedit status.",
                         icon: "error",
                         confirmButtonColor: 'red',
                         iconColor: 'red'

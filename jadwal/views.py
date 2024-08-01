@@ -210,11 +210,11 @@ def hapus_fasilitas(request, id):
 def event(request):
     if request.user.is_superuser:
         # Admin (superuser) bisa melihat semua data
-        event_list = Event.objects.all().order_by('nama')
+        event_list = Event.objects.all().order_by('status', 'tanggal_mulai')
         tempat_list = Tempat.objects.all().order_by('nama')  # Ambil semua tempat
     else:
         # Administrator hanya melihat data berdasarkan id_tempat mereka
-        event_list = Event.objects.filter(id_tempat=request.user.id_role.id_tempat).order_by('nama')
+        event_list = Event.objects.filter(id_tempat=request.user.id_role.id_tempat).order_by('status', 'tanggal_mulai')
         tempat_list = []  # Tidak perlu mengirimkan daftar tempat untuk non-superuser
 
     context = {
@@ -278,6 +278,35 @@ def edit_event(request, event_id):
         event.status = status
         event.save()
         return JsonResponse({'message': 'Event berhasil diupdate!'}, status=200)
+    
+    return JsonResponse({'message': 'Invalid request'}, status=400)
+
+@login_required
+def edit_status(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    if request.method == 'POST':
+        id_tempat = request.POST.get('id_tempat')
+        nama = request.POST.get('nama')
+        tanggal_mulai = request.POST.get('tanggal_mulai')
+        jam_mulai = request.POST.get('jam_mulai')
+        tanggal_selesai = request.POST.get('tanggal_selesai')
+        jam_selesai = request.POST.get('jam_selesai')
+        deskripsi = request.POST.get('deskripsi')
+        status = request.POST.get('status')
+          
+        tempat = get_object_or_404(Tempat, id=id_tempat)
+        # Parse waktu mulai dan selesai
+        mulai = datetime.strptime(f"{tanggal_mulai} {jam_mulai}", '%Y-%m-%d %H:%M')
+        selesai = datetime.strptime(f"{tanggal_selesai} {jam_selesai}", '%Y-%m-%d %H:%M')
+
+        event.id_tempat = tempat
+        event.nama = nama
+        event.tanggal_mulai = mulai
+        event.tanggal_selesai = selesai
+        event.deskripsi = deskripsi
+        event.status = status
+        event.save()
+        return JsonResponse({'message': 'Status berhasil diupdate!'}, status=200)
     
     return JsonResponse({'message': 'Invalid request'}, status=400)
 

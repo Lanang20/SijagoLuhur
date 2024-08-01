@@ -21,6 +21,7 @@ urlpatterns = [
     path("event/", views.event, name="event"),
     path("tambah_event/", views.tambah_event, name="tambah_event"),
     path("edit_event/<int:event_id>/", views.edit_event, name="edit_event"),
+    path("edit_status/<int:event_id>/", views.edit_status, name="edit_status"),
     path('event/hapus/<int:id>/', views.hapus_event, name='hapus_event'),
     path("role/", views.role, name="role"),
     path("tambah_role/", views.tambah_role, name="tambah_role"),

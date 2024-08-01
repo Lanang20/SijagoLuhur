@@ -371,7 +371,16 @@ body {
     justify-content: space-between;
     align-items: flex-start;
 }
-
+.btn-disetujui {
+    background-color: green;
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+    padding: 3px 6px;
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
+}
 .approved p{
     background-color: green;
     color: white;
@@ -380,6 +389,16 @@ body {
     padding: 3px 6px;
     font-weight: 500;
     font-size: 15px;
+}
+.btn-ditolak {
+    background-color: red;
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+    padding: 3px 6px; 
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
 }
 .denied p{
     background-color: red;
@@ -390,7 +409,16 @@ body {
     font-weight: 500;
     font-size: 15px;
 }
-  
+.btn-diproses {
+    background-color: orange;
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+    padding: 3px 6px;
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
+}
 .process p{
     background-color: orange;
     color: white;
