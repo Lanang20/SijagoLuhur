@@ -1,0 +1,389 @@
+{% extends 'base.html' %}
+{% block title %}Event | SIJAGO LUHUR{% endblock %}
+{% block content %}
+{% load static %}
+    <!-- ================ Event ================= -->
+    <div class="event">
+        <div class="cardEvent">
+            <div class="cardHeader">
+                <h2 class="text-center">Daftar Event</h2>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#AddEvent" data-bs-whatever="@mdo"><i class="fas fa-plus me-2"></i>Tambah Event</button>
+                <div class="table-responsive">
+                    <table class="table table-responsive table-striped table-bordered table-sm table-event" id="myTable">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="text-align: center; width:3% ;">No.</th>
+                                <th scope="col" style="text-align: center; width: 15%;">Nama</th>
+                                <th scope="col" style="text-align: center; width: 15%;">Mulai</th>
+                                <th scope="col" style="text-align: center; width: 16%;">Selesai</th>
+                                <th scope="col" style="text-align: center; width: 20%;">Deskripsi</th>
+                                {% if user.is_superuser %}
+                                    <th scope="col" style="width: 8%;">Tempat</th>
+                                {% endif %}
+                                <th scope="col" style="text-align: center;width: 8%;">Status</th>
+                                <th colspan="2" style="text-align: center;width: 15%;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in event_list %}
+                                <tr>
+                                    <th style="text-align: center;" scope="row">{{ forloop.counter }}</th>
+                                    <td>{{ event.nama }}</td>
+                                    <td>{{ event.tanggal_mulai }}</td>
+                                    <td>{{ event.tanggal_selesai }}</td>
+                                    <td class="description" style="text-align: justify;">{{ event.deskripsi }}</td>
+                                    {% if user.is_superuser %}
+                                        <td>{{ event.id_tempat }}</td>
+                                    {% endif %}
+                                    {% if event.status == "disetujui" %}
+                                        <td class="approved"><p>{{ event.status }}</p></td>
+                                    {% elif event.status == "ditolak" %}
+                                        <td class="denied"><p>{{ event.status }}</p></td>
+                                    {% elif event.status == "diproses" %}
+                                        <td class="process"><p>{{ event.status }}</p></td>
+                                    {% endif %}
+                                    <td style="text-align: center; width: 20%;">
+                                        <button type="button" class="btn btn-primary btn-edit"
+                                            data-bs-toggle="modal" data-bs-target="#EditEvent{{ event.id }}"
+                                            data-bs-whatever="@mdo"><i class="far fa-edit me-2"></i>Edit</button>
+                                        <button type="button" class="btn btn-danger btn-hapus"
+                                            data-id="{{ event.id }}" onclick="confirmDelete(this)">
+                                            <i class="fas fa-trash me-2"></i>Hapus</button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Tambah Event -->
+        <div class="modal fade" id="AddEvent" tabindex="-1" aria-labelledby="AddEventlabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="AddEventlabel">Tambah Event</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addEventForm" method="POST" action="{% url 'tambah_event' %}">
+                            {% csrf_token %}
+                            <!-- Untuk Superuser: Pilih Tempat -->
+                            {% if user.is_superuser %}
+                            <div class="mb-3">
+                                <label for="idtempatevent" class="form-label">Tempat</label>
+                                <select id="idtempatevent" class="form-select" name="id_tempat" required>
+                                    <option selected disabled value="">Pilih...</option>
+                                    {% for tempat in tempat_list %}
+                                        <option value="{{ tempat.id }}">{{ tempat.nama }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% else %}
+                            <!-- Untuk Administrator: Tempat Tersembunyi -->
+                            <input type="hidden" id="idtempatevent" name="id_tempat" value="{{ user.id_role.id_tempat.id }}">
+                            {% endif %}
+                            
+                            <div class="mb-3">
+                                <label for="namaevent" class="col-form-label">Nama</label>
+                                <input type="text" class="form-control" id="namaevent" name="nama" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="tgljammulai" class="col-form-label">Tanggal & Jam Mulai</label>
+                                <div class="d-flex">
+                                    <div class="col-md-5 me-4">
+                                        <input type="date" class="form-control" id="tgljammulai" name="tanggal_mulai" required>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <input type="time" class="form-control" id="jammulai" name="jam_mulai" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="tgljamselesai" class="col-form-label">Tanggal & Jam Selesai</label>
+                                <div class="d-flex">
+                                    <div class="col-md-5 me-4">
+                                        <input type="date" class="form-control" id="tgljamselesai" name="tanggal_selesai" required>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <input type="time" class="form-control" id="jamselesai" name="jam_selesai" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="deskripsievent" class="col-form-label">Deskripsi</label>
+                                <textarea style="height: 95px;" class="form-control" id="deskripsievent" name="deskripsi" required></textarea>
+                            </div>
+
+                            <!-- Untuk Superuser: Pilih Status -->
+                            {% if user.is_superuser %}
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select id="status" class="form-select" name="status" required>
+                                    <option selected disabled>Pilih...</option>
+                                    <option value="diproses">Diproses</option>
+                                    <option value="disetujui">Disetujui</option>
+                                    <option value="ditolak">Ditolak</option>
+                                </select>
+                            </div>
+                            {% else %}
+                            <!-- Untuk Administrator: Status Tersembunyi -->
+                            <input type="hidden" id="status" name="status" value="diproses">
+                            {% endif %}
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="submit" class="btn btn-primary">Tambah</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Batas Modal Tambah Event -->
+        
+        <!-- Modal Edit Event -->
+        {% for event in event_list %}
+        <div class="modal fade" id="EditEvent{{ event.id }}" tabindex="-1" aria-labelledby="EditEventlabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="EditEventlabel">Edit Event</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editEventForm{{ event.id }}" data-event-id="{{ event.id }}">
+                            {% csrf_token %}
+                            <!-- Untuk Superuser: Pilih Tempat -->
+                            {% if user.is_superuser %}
+                            <div class="mb-3">
+                                <label for="editidtempatevent" class="form-label">Tempat</label>
+                                <select id="editidtempatevent" class="form-select" name="id_tempat">
+                                    {% for tempat in tempat_list %}
+                                        <option value="{{ tempat.id }}" {% if event.id_tempat.id == tempat.id %}selected{% endif %}>{{ tempat.nama }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% else %}
+                            <!-- Untuk Administrator: Tempat Tersembunyi -->
+                            <input type="hidden" id="editidtempatevent" name="id_tempat" value="{{ user.id_role.id_tempat.id }}">
+                            {% endif %}
+                            
+                            <div class="mb-3">
+                                <label for="editnamaevent" class="col-form-label">Nama</label>
+                                <input type="text" class="form-control" id="editnamaevent" name="nama" value="{{ event.nama }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="edittgljammulai" class="col-form-label">Tanggal & Jam Mulai</label>
+                                <div class="d-flex">
+                                    <div class="col-md-5 me-4">
+                                        <input type="date" class="form-control" id="edittgljammulai" name="tanggal_mulai" value="{{ event.tanggal_mulai|date:'Y-m-d' }}" required>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <input type="time" class="form-control" id="editjammulai" name="jam_mulai" value="{{ event.tanggal_mulai|date:'H:i' }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="edittgljamselesai" class="col-form-label">Tanggal & Jam Selesai</label>
+                                <div class="d-flex">
+                                    <div class="col-md-5 me-4">
+                                        <input type="date" class="form-control" id="edittgljamselesai" name="tanggal_selesai" value="{{ event.tanggal_selesai|date:'Y-m-d' }}" required>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <input type="time" class="form-control" id="editjamselesai" name="jam_selesai" value="{{ event.tanggal_selesai|date:'H:i' }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editdeskripsievent" class="col-form-label">Deskripsi</label>
+                                <textarea style="height: 95px;" class="form-control" id="editdeskripsievent" name="deskripsi" required>{{ event.deskripsi }}</textarea>
+                            </div>
+                            <!-- Untuk Superuser: Pilih Status -->
+                            {% if user.is_superuser %}
+                            <div class="mb-3">
+                                <label for="editstatus" class="form-label">Status</label>
+                                <select id="editstatus" class="form-select" name="status">
+                                    <option value="diproses" {% if event.status == 'diproses' %}selected{% endif %}>Diproses</option>
+                                    <option value="disetujui" {% if event.status == 'disetujui' %}selected{% endif %}>Disetujui</option>
+                                    <option value="ditolak" {% if event.status == 'ditolak' %}selected{% endif %}>Ditolak</option>
+                                </select>
+                            </div>
+                            {% else %}
+                            <!-- Untuk Administrator: Status Tersembunyi -->
+                                {% if event.status == 'disetujui' %}
+                                    <input type="hidden" id="editstatus" name="status" value="disetujui">
+                                {% elif event.status == 'ditolak' %}
+                                    <input type="hidden" id="editstatus" name="status" value="ditolak">
+                                {% else %}
+                                    <input type="hidden" id="editstatus" name="status" value="diproses">
+                                {% endif %}
+                            {% endif %}
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <!-- Batas Modal Edit Event -->
+
+    </div>
+
+<!-- SweetAlert2 JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Pop Up Tambah Data
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('addEventForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Mencegah pengiriman formulir secara default
+
+            const formData = new FormData(this);
+
+            fetch("{% url 'tambah_event' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}' // Pastikan CSRF token disertakan
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                Swal.fire({
+                    title: "Event berhasil disimpan!",
+                    icon: "success",
+                    confirmButtonColor: 'red',
+                    customClass: {
+                        text: 'swal-text'
+                    }
+                }).then(() => {
+                    // Kosongkan form setelah pop-up ditutup
+                    document.querySelector('#addEventForm').reset();
+                    // Tutup modal menggunakan Bootstrap API
+                    var myModal = bootstrap.Modal.getInstance(document.getElementById('AddEvent'));
+                    if (myModal) {
+                        myModal.hide();
+                    }
+                    // Refresh halaman
+                    window.location.reload();
+                });
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: "Terjadi Kesalahan",
+                    text: "Event gagal disimpan. Silakan coba lagi.",
+                    icon: "error",
+                    confirmButtonColor: 'red',
+                    iconColor: 'red',
+                });
+            });
+        });
+    });
+
+    // Pop Up Edit
+    // Handle Edit Event Form Submission
+    document.querySelectorAll('[id^="editEventForm"]').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const eventId = this.getAttribute('data-event-id');
+            const formData = new FormData(this);
+
+            fetch(`{% url 'edit_event' 0 %}`.replace('0', eventId), {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    Swal.fire({
+                        title: "Sukses!",
+                        text: data.message,
+                        icon: "success",
+                        confirmButtonColor: 'red',
+                    }).then(() => {
+                        const modalId = `EditEvent${eventId}`;
+                        const myModal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+                        if (myModal) {
+                            myModal.hide();
+                        }
+                        location.reload(); // Reload the page to update the event list
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Gagal!",
+                        text: "Terjadi kesalahan saat mengedit event.",
+                        icon: "error",
+                        confirmButtonColor: 'red',
+                        iconColor: 'red'
+                    });
+                }
+            });
+        });
+    });
+
+    // Pop Up Hapus
+    function confirmDelete(button) {
+        const eventId = button.getAttribute('data-id');
+
+        Swal.fire({
+            title: 'Apakah Anda Yakin?',
+            text: "Anda tidak bisa memulihkan data ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Hapus!',
+            confirmButtonColor: 'red',
+            cancelButtonText: 'Tidak, Batal!',
+            iconColor: 'red',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/event/hapus/${eventId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+                }).then(response => {
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Dihapus!',
+                        text: 'Event telah dihapus.',
+                        icon: 'success',
+                        confirmButtonColor: 'red',
+                    }).then(() => {
+                        location.reload(); // Refresh the page after deletion
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'There was a problem deleting the event.',
+                        icon: 'error',
+                        confirmButtonColor: 'red',
+                        iconColor: 'red',
+                    });
+                }
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire({
+                    title: 'Dibatalkan',
+                    text: 'Data event Anda tetap aman :)',
+                    icon: 'error',
+                    confirmButtonColor: 'red',
+                    iconColor: 'red',
+                });
+            }
+        });
+    }
+</script>
+{% endblock %}

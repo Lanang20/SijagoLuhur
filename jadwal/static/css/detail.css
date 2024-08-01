@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Poppins&display=swap');
+body {
+    font-family: 'Poppins', sans-serif;
+    padding-top: 120px;
+}
+
+/* CSS Untuk Navbar */
+.custom-nav {
+    background-color: transparent;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 35px 70px;
+    z-index: 1000;
+    transition: 0.5s;
+}
+.custom-nav.sticky-navbar {
+    background-color: #ffffff;
+    padding: 10px 100px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+.custom-nav .navbar-brand img {
+    width: 30px;
+    height: 30px;
+    margin-top: -7px;
+}
+.custom-nav .navbar-brand span {
+    font-family: 'Caveat Brush', cursive;
+    color: red;
+    font-weight: 400;
+    font-size: 38px;
+    margin-left: 0.4em;
+}
+.custom-nav #navbarNav .navbar-nav .nav-item .nav-link {
+    color: rgba(0, 0, 0, 0.70);
+    font-weight: 400;
+    font-size: 17px;
+    margin-left: 2.4em;
+    transition: 0.3s color ease;
+}
+.custom-nav #navbarNav .navbar-nav .nav-item .nav-link:hover {
+    display: inline-block;
+    color: white;
+    background-color: red;
+    border-radius: 0.5em;
+    padding: 0.5em 1em;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: 0.5s ease;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.3);
+}
+
+p.description {
+    white-space: pre-wrap; /* Preserves spaces and line breaks */
+    white-space: pre-line; /* Preserves newlines but collapses consecutive whitespace */
+}
+
+.table td .description {
+    white-space: pre-wrap; /* Preserves spaces and line breaks */
+    max-width: 700px; /* Maksimum lebar kolom */
+    word-wrap: break-word; /* Memastikan teks tidak melampaui batas kolom */
+    overflow-wrap: break-word; /* Memastikan teks tidak melampaui batas kolom */
+}
+/* Tambahkan style untuk tabel agar responsive */
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+h1 {
+    font-size: 30px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    body {
+        padding-top: 80px;
+    }
+    .custom-nav {
+        background-color: #ffffff;
+        padding: 8px 10px;
+    }
+    .custom-nav.sticky-navbar {
+        background-color: #ffffff;
+        padding: 8px 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    button.navbar-toggler {
+        position: fixed;
+        right: 0;
+        top: 0;
+        margin-right: 20px;
+        margin-top: 15px;
+    }
+    .custom-nav .navbar-brand span {
+        font-size: 30px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .custom-nav {
+        background-color: #ffffff;
+        padding: 8px 10px;
+    }
+}

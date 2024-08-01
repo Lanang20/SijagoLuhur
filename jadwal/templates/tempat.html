@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% block title %}Tempat | SIJAGO LUHUR{% endblock %}
+{% block content %}
+{% load static %}
+    <!-- ================ Tempat ================= -->
+    <div class="tempat">
+        <div class="cardTempat">
+            <div class="cardHeader">
+                <h2 class="text-center">Daftar Tempat</h2>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#AddTempat" data-bs-whatever="@mdo"><i class="fas fa-plus me-2"></i>Tambah
+                    Tempat</button>
+                <div class="table-responsive">
+                    <table class="table table-responsive table-striped table-bordered table-sm" id="myTable">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="text-align: center;">No.</th>
+                                <th scope="col" style="text-align: center;">Nama Tempat</th>
+                                <th scope="col" style="text-align: center; width: 700px;">Deskripsi</th>
+                                <th scope="col" style="text-align: center; width: 20%;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="">
+                            {% for tempat in tempat_list %}
+                                <tr>
+                                    <th  style="text-align: center;" scope="row">{{ forloop.counter }}</th>
+                                    <td>{{ tempat.nama }}</td>
+                                    <td><div class="description">{{ tempat.deskripsi }}</div></td>
+                                    <td style="text-align: center; width: 20%;">
+                                        <button type="button" class="btn btn-primary btn-edit"
+                                            data-bs-toggle="modal" data-bs-target="#EditTempat{{ tempat.id }}"
+                                            data-bs-whatever="@mdo"><i class="far fa-edit me-2"></i>Edit</button>
+                                        <button type="button" class="btn btn-danger btn-hapus"
+                                            data-id="{{ tempat.id }}" onclick="confirmDelete(this)">
+                                            <i class="fas fa-trash me-2"></i>Hapus</button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Tambah Tempat -->
+        <div class="modal fade" id="AddTempat" tabindex="-1" aria-labelledby="AddTempatlabel"
+        aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="AddTempatlabel">Tambah Tempat</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addTempatForm" action="{% url 'tambah_tempat' %}" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="nama" class="col-form-label">Nama</label>
+                                <input type="text" class="form-control" id="nama" name="nama" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="deskripsi" class="col-form-label">Deskripsi</label>
+                                <textarea style="height: 160px;" class="form-control" id="deskripsi" name="deskripsi" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="foto" class="form-label">Foto</label>
+                                <input class="form-control" type="file" id="foto" name="foto">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Tutup</button>
+                                <button type="submit" class="btn btn-primary">Tambah</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Edit Tempat -->
+        {% for tempat in tempat_list %}
+        <div class="modal fade" id="EditTempat{{ tempat.id }}" tabindex="-1" aria-labelledby="EditTempatlabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="EditTempatlabel">Edit Tempat</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editTempatForm{{ tempat.id }}" data-tempat-id="{{ tempat.id }}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="nama" class="col-form-label">Nama</label>
+                                <input type="text" class="form-control" id="nama" name="nama" value="{{ tempat.nama }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="deskripsi" class="col-form-label">Deskripsi</label>
+                                <textarea style="height: 160px;" class="form-control" id="deskripsi"
+                                        name="deskripsi">{{ tempat.deskripsi }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="foto" class="form-label">Foto</label>
+                                <input class="form-control" type="file" id="foto" name="foto">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Tutup</button>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+<!-- SweetAlert2 JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Pop Up Tambah Data
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('addTempatForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Mencegah pengiriman formulir secara default
+
+            const formData = new FormData(this);
+
+            fetch("{% url 'tambah_tempat' %}", { // Sesuaikan dengan URL view Django kamu
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}' // Pastikan CSRF token disertakan
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                Swal.fire({
+                    title: "Tempat berhasil disimpan!",
+                    icon: "success",
+                    confirmButtonColor: 'red',
+                    customClass: {
+                        text: 'swal-text'
+                    }
+                }).then(() => {
+                    // Kosongkan form setelah pop-up ditutup
+                    document.querySelector('#addTempatForm').reset();
+                    // Tutup modal menggunakan Bootstrap API
+                    var myModal = bootstrap.Modal.getInstance(document.getElementById('AddTempat'));
+                    if (myModal) {
+                        myModal.hide();
+                    }
+                    // Refresh halaman
+                    window.location.reload();
+                });
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: "Terjadi Kesalahan",
+                    text: "Data tempat gagal disimpan. Silakan coba lagi.",
+                    icon: "error",
+                    confirmButtonColor: 'red',
+                    iconColor: 'red',
+                });
+            });
+        });
+    });
+
+    // Pop Up Edit
+    // Handle Edit Event Form Submission
+    document.querySelectorAll('[id^="editTempatForm"]').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const tempatId = this.getAttribute('data-tempat-id');
+            const formData = new FormData(this);
+
+            fetch(`{% url 'edit_tempat' 0 %}`.replace('0', tempatId), {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    Swal.fire({
+                        title: "Sukses!",
+                        text: data.message,
+                        icon: "success",
+                        confirmButtonColor: 'red',
+                    }).then(() => {
+                        const modalId = `EditTempat${tempatId}`;
+                        const myModal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+                        if (myModal) {
+                            myModal.hide();
+                        }
+                        location.reload(); // Reload the page to update the tempat list
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Gagal!",
+                        text: "Terjadi kesalahan saat mengedit tempat.",
+                        icon: "error",
+                        confirmButtonColor: 'red',
+                        iconColor: 'red'
+                    });
+                }
+            });
+        });
+    });
+
+    // Pop Up Hapus
+    function confirmDelete(button) {
+        const tempatId = button.getAttribute('data-id');
+
+        Swal.fire({
+            title: 'Apakah Anda Yakin?',
+            text: "Anda tidak bisa memulihkan data ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Hapus!',
+            confirmButtonColor: 'red',
+            cancelButtonText: 'Tidak, Batal!',
+            iconColor: 'red',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/tempat/hapus/${tempatId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+                }).then(response => {
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Dihapus!',
+                        text: 'Data tempat telah dihapus.',
+                        icon: 'success',
+                        confirmButtonColor: 'red',
+                    }).then(() => {
+                        location.reload(); // Refresh the page after deletion
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'There was a problem deleting the tempat.',
+                        icon: 'error',
+                        confirmButtonColor: 'red',
+                    });
+                }
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire({
+                    title: 'Dibatalkan',
+                    text: 'Data tempat Anda tetap aman :)',
+                    icon: 'error',
+                    confirmButtonColor: 'red',
+                    iconColor: 'red',
+                });
+            }
+        });
+    }
+</script>
+{% endblock %}

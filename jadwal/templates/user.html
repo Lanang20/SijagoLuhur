@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block title %}User | SIJAGO LUHUR{% endblock %}
+{% block content %}
+{% load static %}
+    <!-- ================ User ================= -->
+    <div class="user">
+        <div class="cardUser">
+            <div class="cardHeader">
+                <h2 class="text-center">Daftar User</h2>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#AddUser" data-bs-whatever="@mdo"><i class="fas fa-plus me-2"></i>Tambah User</button>
+                <div class="table-responsive">
+                    <table class="table table-responsive table-striped table-bordered table-sm table-user" id="myTable">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="text-align: center;">No.</th>
+                                <th scope="col" style="text-align: center;">Username</th>
+                                <th scope="col" style="text-align: center;">Email</th>
+                                <th scope="col" style="text-align: center;">Role</th>
+                                <th scope="col" style="text-align: center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in user_list %}
+                                <tr>
+                                    <th style="text-align: center;" scope="row">{{ forloop.counter }}</th>
+                                    <td>{{ user.username }}</td>
+                                    <td>{{ user.email }}</td>
+                                    {% if user.is_superuser %}
+                                        <td>Super Admin</td>
+                                    {% else %}
+                                        <td>{{ user.id_role }}</td>
+                                    {% endif %}
+                                    <td style="text-align: center;">
+                                        {% if user.is_superuser %}
+                                        <button type="button" class="btn btn-secondary">
+                                            <i class="fas fa-trash me-2"></i>Hapus</button>
+                                        {% else %}
+                                        <button type="button" class="btn btn-danger"
+                                            data-id="{{ user.id }}" onclick="confirmDelete(this)">
+                                            <i class="fas fa-trash me-2"></i>Hapus</button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Tambah User -->
+        <div class="modal fade" id="AddUser" tabindex="-1" aria-labelledby="AddUserlabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="AddUserlabel">Tambah User</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="AddUserForm">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="usernameuser" class="col-form-label">Username</label>
+                                    <input type="text" class="form-control" id="usernameuser" name="username" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="emailuser" class="col-form-label">Email</label>
+                                    <input type="email" class="form-control" id="emailuser" name="email" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="password1" class="col-form-label">Password</label>
+                                    <input type="password" class="form-control" id="password1" name="password1" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="password2" class="col-form-label">Konfirmasi Password</label>
+                                    <input type="password" class="form-control" id="password2" name="password2" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="idrole" class="form-label">Role</label>
+                                    <select id="idrole" class="form-select" name="role" required>
+                                        <option selected disabled value="">Pilih...</option>
+                                        {% for role in role_list %}
+                                            <option value="{{ role.id }}">{{ role.nama }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="submit" class="btn btn-primary">Tambah</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Batas Modal Tambah User -->
+    </div>
+
+<!-- SweetAlert2 JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Pop Up Tambah User
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle Add User Form Submission
+        document.querySelector('#AddUserForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const formData = new FormData(this);
+
+            fetch("{% url 'tambah_user' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => {
+                return response.json().then(data => ({
+                    status: response.status, // Mendapatkan status HTTP
+                    json: data
+                }));
+            })
+            .then(data => {
+                if (data.status === 200) {
+                    Swal.fire({
+                        title: "Sukses!",
+                        text: data.json.message,
+                        icon: "success",
+                        confirmButtonColor: 'red',
+                    }).then(() => {
+                        // Kosongkan form setelah pop-up ditutup
+                        document.querySelector('#AddUserForm').reset();
+                        // Tutup modal menggunakan Bootstrap API
+                        var myModal = bootstrap.Modal.getInstance(document.getElementById('AddUser'));
+                        if (myModal) {
+                            myModal.hide();
+                        }
+                        // Refresh halaman
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Gagal!",
+                        text: data.json.message,
+                        icon: "error",
+                        confirmButtonColor: 'red',
+                        iconColor: 'red',
+                    });
+                }
+            });
+        });
+    });
+
+    // Pop Up Hapus
+    function confirmDelete(button) {
+        const userId = button.getAttribute('data-id');
+
+        Swal.fire({
+            title: 'Apakah Anda Yakin?',
+            text: "Anda tidak bisa memulihkan data ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Hapus!',
+            confirmButtonColor: 'red',
+            cancelButtonText: 'Tidak, Batal!',
+            iconColor: 'red',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/user/hapus/${userId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+                }).then(response => {
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Dihapus!',
+                        text: 'Data user telah dihapus.',
+                        icon: 'success',
+                        confirmButtonColor: 'red',
+                    }).then(() => {
+                        location.reload(); // Refresh the page after deletion
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'There was a problem deleting the user.',
+                        icon: 'error',
+                        confirmButtonColor: 'red',
+                        iconColor: 'red',
+                    });
+                }
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire({
+                    title: 'Dibatalkan',
+                    text: 'Data user Anda tetap aman :)',
+                    icon: 'error',
+                    confirmButtonColor: 'red',
+                    iconColor: 'red',
+                });
+            }
+        });
+    }
+</script>
+{% endblock %}

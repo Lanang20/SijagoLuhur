@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+{% block title %}Fasilitas | SIJAGO LUHUR{% endblock %}
+{% block content %}
+{% load static %}
+    <!-- ================ Fasilitas ================= -->
+    <div class="fasilitas">
+        <div class="cardFasilitas">
+            <div class="cardHeader">
+                <h2 class="text-center">Daftar Fasilitas</h2>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#AddFasilitas" data-bs-whatever="@mdo"><i class="fas fa-plus me-2"></i>Tambah Fasilitas</button>
+                <div class="table-responsive">
+                    <table class="table table-responsive table-striped table-bordered table-sm table-fasilitas" id="myTable">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="text-align: center;">No.</th>
+                                <th style="text-align: center; width: 120px;" scope="col">Objek Retribusi</th>
+                                <th style="text-align: center; width: 35%;" scope="col">Rincian</th>
+                                <th style="text-align: center;" scope="col">Keterangan</th>
+                                {% if user.is_superuser %}
+                                    <th style="text-align: center;" scope="col">Tempat</th>
+                                {% endif %}
+                                <th scope="col" style="text-align: center; width: 20%;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for fasilitas in fasilitas_list %}
+                                <tr>
+                                    <th style="text-align: center;" scope="row">{{ forloop.counter }}</th>
+                                    <td>{{ fasilitas.objek_retribusi }}</td>
+                                    <td><div class="description">{{ fasilitas.rincian }}</div></td>
+                                    <td>{{ fasilitas.keterangan }}</td>
+                                    {% if user.is_superuser %}
+                                        <td>{{ fasilitas.id_tempat }}</td>
+                                    {% endif %}
+                                    <td style="text-align: center; width: 20%;">
+                                        <button type="button" class="btn btn-primary btn-edit"
+                                            data-bs-toggle="modal" data-bs-target="#EditFasilitas{{ fasilitas.id }}"
+                                            data-bs-whatever="@mdo"><i class="far fa-edit me-2"></i>Edit</button>
+                                        <button type="button" class="btn btn-danger btn-hapus"
+                                            data-id="{{ fasilitas.id }}" onclick="confirmDelete(this)">
+                                            <i class="fas fa-trash me-2"></i>Hapus</button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Tambah Fasilitas -->
+        <div class="modal fade" id="AddFasilitas" tabindex="-1" aria-labelledby="AddFasilitaslabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="AddFasilitaslabel">Tambah Fasilitas</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addFasilitasForm" action="{% url 'tambah_fasilitas' %}" method="POST">
+                            {% csrf_token %}
+                            {% if user.is_superuser %}
+                            <div class="mb-3">
+                                <label for="idtempat" class="col-form-label">Tempat</label>
+                                <select class="form-select" id="idtempat" name="id_tempat" required>
+                                    <option selected disabled value="">Pilih...</option>
+                                    {% for tempat in tempat_list %}
+                                        <option value="{{ tempat.id }}">{{ tempat.nama }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% else %}
+                                <input type="hidden" id="idtempat" name="id_tempat" value="{{ user.id_role.id_tempat.id }}">
+                            {% endif %}
+                            <div class="mb-3">
+                                <label for="objekretribusi" class="col-form-label">Objek Retribusi</label>
+                                <input type="text" class="form-control" id="objekretribusi" name="objek_retribusi" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="rincian" class="col-form-label">Rincian</label>
+                                <textarea style="height: 95px;" class="form-control" id="rincian" name="rincian" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="keterangan" class="col-form-label">Keterangan</label>
+                                <textarea style="height: 95px;" class="form-control" id="keterangan" name="keterangan" required></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Tutup</button>
+                                <button type="submit" class="btn btn-primary">Tambah</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <!-- Batas Modal Tambah Fasilitas -->
+
+        <!-- Modal Edit Fasilitas -->
+        {% for fasilitas in fasilitas_list %}
+        <div class="modal fade" id="EditFasilitas{{ fasilitas.id }}" tabindex="-1" aria-labelledby="EditFasilitaslabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="EditFasilitaslabel">Edit Fasilitas</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editFasilitasForm{{ fasilitas.id }}" data-fasilitas-id="{{ fasilitas.id }}">
+                            {% csrf_token %}
+                            <input type="hidden" name="id_fasilitas" value="{{ fasilitas.id }}">
+                            
+                            {% if user.is_superuser %}
+                            <div class="mb-3">
+                                <label for="editidtempatfasilitas" class="col-form-label">Tempat</label>
+                                <select class="form-select" id="editidtempatfasilitas" name="id_tempat" required>
+                                    {% for tempat in tempat_list %}
+                                        <option value="{{ tempat.id }}" {% if fasilitas.id_tempat.id == tempat.id %}selected{% endif %}>
+                                            {{ tempat.nama }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% else %}
+                            <input type="hidden" id="editidtempatfasilitas" name="id_tempat" value="{{ fasilitas.id_tempat.id }}">
+                            {% endif %}
+
+                            <div class="mb-3">
+                                <label for="editobjekretribusi" class="col-form-label">Objek Retribusi</label>
+                                <input type="text" class="form-control" id="editobjekretribusi" name="objek_retribusi" value="{{ fasilitas.objek_retribusi }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editrincian" class="col-form-label">Rincian</label>
+                                <textarea style="height: 95px;" class="form-control" id="editrincian" name="rincian" required>{{ fasilitas.rincian }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editketerangan" class="col-form-label">Keterangan</label>
+                                <textarea style="height: 95px;" class="form-control" id="editketerangan" name="keterangan" required>{{ fasilitas.keterangan }}</textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <!-- Batas Modal Edit Fasilitas -->
+    </div>
+
+<!-- SweetAlert2 JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Pop Up Tambah Data
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('addFasilitasForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Mencegah pengiriman formulir secara default
+
+            const formData = new FormData(this);
+
+            fetch("{% url 'tambah_fasilitas' %}", { // Sesuaikan dengan URL view Django kamu
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}' // Pastikan CSRF token disertakan
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                Swal.fire({
+                    title: "Fasilitas berhasil disimpan!",
+                    icon: "success",
+                    confirmButtonColor: 'red',
+                    customClass: {
+                        text: 'swal-text'
+                    }
+                }).then(() => {
+                    // Kosongkan form setelah pop-up ditutup
+                    document.querySelector('#addFasilitasForm').reset();
+                    // Tutup modal menggunakan Bootstrap API
+                    var myModal = bootstrap.Modal.getInstance(document.getElementById('AddFasilitas'));
+                    if (myModal) {
+                        myModal.hide();
+                    }
+                    // Refresh halaman
+                    window.location.reload();
+                });
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: "Terjadi Kesalahan",
+                    text: "Fasilitas gagal disimpan. Silakan coba lagi.",
+                    icon: "error",
+                    confirmButtonColor: 'red',
+                    iconColor: 'red',
+                });
+            });
+        });
+    });
+
+    // Pop Up Edit
+    // Handle Edit Event Form Submission
+    document.querySelectorAll('[id^="editFasilitasForm"]').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const fasilitasId = this.getAttribute('data-fasilitas-id');
+            const formData = new FormData(this);
+
+            fetch(`{% url 'edit_fasilitas' 0 %}`.replace('0', fasilitasId), {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    Swal.fire({
+                        title: "Sukses!",
+                        text: data.message,
+                        icon: "success",
+                        confirmButtonColor: 'red',
+                    }).then(() => {
+                        const modalId = `EditFasilitas${fasilitasId}`;
+                        const myModal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+                        if (myModal) {
+                            myModal.hide();
+                        }
+                        location.reload(); // Reload the page to update the fasilitas list
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Gagal!",
+                        text: "Terjadi kesalahan saat mengedit fasilitas.",
+                        icon: "error",
+                        confirmButtonColor: 'red',
+                        iconColor: 'red'
+                    });
+                }
+            });
+        });
+    });
+
+    // Pop Up Hapus
+    function confirmDelete(button) {
+        const fasilitasId = button.getAttribute('data-id');
+
+        Swal.fire({
+            title: 'Apakah Anda Yakin?',
+            text: "Anda tidak bisa memulihkan data ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Hapus!',
+            confirmButtonColor: 'red',
+            cancelButtonText: 'Tidak, Batal!',
+            iconColor: 'red',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/fasilitas/hapus/${fasilitasId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+                }).then(response => {
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Dihapus!',
+                        text: 'Fasilitas telah dihapus.',
+                        icon: 'success',
+                        confirmButtonColor: 'red',
+                    }).then(() => {
+                        location.reload(); // Refresh the page after deletion
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'There was a problem deleting the fasilitas.',
+                        icon: 'error',
+                        confirmButtonColor: 'red',
+                    });
+                }
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire({
+                    title: 'Dibatalkan',
+                    text: 'Data fasilitas Anda tetap aman :)',
+                    icon: 'error',
+                    confirmButtonColor: 'red',
+                    iconColor: 'red',
+                });
+            }
+        });
+    }
+</script>
+{% endblock %}

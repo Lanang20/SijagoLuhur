@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard | SIJAGO LUHUR{% endblock %}
+{% block content %}
+{% load static %}
+    <!-- ======================= kartu ================== -->
+    {% if user.is_superuser %}
+    <div class="kartuBox">
+        <div class="kartu">
+            <div>
+                <div class="numbers">{{ upcoming_events }}</div>
+                <div class="kartuName">Upcoming Events</div>
+            </div>
+
+            <div class="iconBx">
+                <ion-icon name="calendar-outline"></ion-icon>
+            </div>
+        </div>
+
+        <div class="kartu">
+            <div>
+                <div class="numbers">{{ event_diproses }}</div>
+                <div class="kartuName">Event Diproses</div>
+            </div>
+
+            <div class="iconBx">
+                <ion-icon name="time-outline"></ion-icon>
+            </div>
+        </div>
+
+        <div class="kartu">
+            <div>
+                <div class="numbers">{{ total_tempat }}</div>
+                <div class="kartuName">Total Tempat</div>
+            </div>
+
+            <div class="iconBx">
+                <ion-icon name="business-outline"></ion-icon>
+            </div>
+        </div>
+
+        <div class="kartu">
+            <div>
+                <div class="numbers">{{ total_user }}</div>
+                <div class="kartuName">Total User</div>
+            </div>
+
+            <div class="iconBx">
+                <ion-icon name="people-outline"></ion-icon>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <!-- ================ Kalender ================= -->
+    <div class="kalender">
+        <div class="cardKalender">
+            <div class="cardHeader">
+                <div id='calendar'></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

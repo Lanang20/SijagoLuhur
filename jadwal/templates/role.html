@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% block title %}Role | SIJAGO LUHUR{% endblock %}
+{% block content %}
+{% load static %}
+    <!-- ================ Role ================= -->
+    <div class="role">
+        <div class="cardRole">
+            <div class="cardHeader">
+                <h2 class="text-center">Daftar Role</h2>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#AddRole" data-bs-whatever="@mdo"><i class="fas fa-plus me-2"></i>Tambah Role</button>
+                <div class="table-responsive">
+                    <table class="table table-responsive table-striped table-bordered table-sm table-role" id="myTable">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="text-align: center;">No.</th>
+                                <th scope="col" style="text-align: center;">Nama</th>
+                                <th scope="col" style="text-align: center;">Tempat</th>
+                                <th scope="col" style="text-align: center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for role in role_list %}
+                                <tr>
+                                    <th style="text-align: center;" scope="row">{{ forloop.counter }}</th>
+                                    <td>{{ role.nama }}</td>
+                                    <td>{{ role.id_tempat }}</td>
+                                    <td style="text-align: center; width: 20%;">
+                                        <button type="button" class="btn btn-primary btn-edit"
+                                            data-bs-toggle="modal" data-bs-target="#EditRole{{ role.id }}"
+                                            data-bs-whatever="@mdo"><i class="far fa-edit me-2"></i>Edit</button>
+                                        <button type="button" class="btn btn-danger btn-hapus"
+                                            data-id="{{ role.id }}" onclick="confirmDelete(this)">
+                                            <i class="fas fa-trash me-2"></i>Hapus</button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Tambah Role -->
+        <div class="modal fade" id="AddRole" tabindex="-1" aria-labelledby="AddRolelabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="AddRolelabel">Tambah Role</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addRoleForm" method="POST" action="{% url 'tambah_role' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="namarole" class="col-form-label">Nama</label>
+                                <input type="text" class="form-control" id="namarole" name="nama">
+                            </div>
+                            <div class="mb-3">
+                                <label for="idtempatrole" class="form-label">Tempat</label>
+                                <select id="idtempatrole" class="form-select" name="id_tempat" required>
+                                    <option selected disabled value="">Pilih...</option>
+                                    {% for tempat in tempat_list %}
+                                        <option value="{{ tempat.id }}">{{ tempat.nama }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Tutup</button>
+                                <button type="submit" class="btn btn-primary">Tambah</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Batas Modal Tambah Role -->
+
+        <!-- Modal Edit Role -->
+        {% for role in role_list %}
+        <div class="modal fade" id="EditRole{{ role.id }}" tabindex="-1" aria-labelledby="EditRolelabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="EditRolelabel">Edit Role</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editRoleForm{{ role.id }}" data-role-id="{{ role.id }}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="editnamarole" class="col-form-label">Nama</label>
+                                <input type="text" class="form-control" id="editnamarole" name="nama" value="{{ role.nama }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editidtempatrole" class="form-label">Tempat</label>
+                                <select id="editidtempatrole" class="form-select" name="id_tempat">
+                                    {% for tempat in tempat_list %}
+                                        <option value="{{ tempat.id }}" {% if role.id_tempat.id == tempat.id %}selected{% endif %}>{{ tempat.nama }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Tutup</button>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <!-- Batas Modal Edit Role -->
+    </div>
+
+<!-- SweetAlert2 JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Pop Up Tambah Data
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('addRoleForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Mencegah pengiriman formulir secara default
+
+            const formData = new FormData(this);
+
+            fetch("{% url 'tambah_role' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}' // Pastikan CSRF token disertakan
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                Swal.fire({
+                    title: "Role berhasil disimpan!",
+                    icon: "success",
+                    confirmButtonColor: 'red',
+                    customClass: {
+                        text: 'swal-text'
+                    }
+                }).then(() => {
+                    // Kosongkan form setelah pop-up ditutup
+                    document.querySelector('#addRoleForm').reset();
+                    // Tutup modal menggunakan Bootstrap API
+                    var myModal = bootstrap.Modal.getInstance(document.getElementById('AddRole'));
+                    if (myModal) {
+                        myModal.hide();
+                    }
+                    // Refresh halaman
+                    window.location.reload();
+                });
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: "Terjadi Kesalahan",
+                    text: "Role gagal disimpan. Silakan coba lagi.",
+                    icon: "error",
+                    confirmButtonColor: 'red',
+                    iconColor: 'red',
+                });
+            });
+        });
+    });
+
+    // Pop Up Edit
+    // Handle Edit Event Form Submission
+    document.querySelectorAll('[id^="editRoleForm"]').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const roleId = this.getAttribute('data-role-id');
+            const formData = new FormData(this);
+
+            fetch(`{% url 'edit_role' 0 %}`.replace('0', roleId), {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    Swal.fire({
+                        title: "Sukses!",
+                        text: data.message,
+                        icon: "success",
+                        confirmButtonColor: 'red',
+                    }).then(() => {
+                        const modalId = `EditRole${roleId}`;
+                        const myModal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+                        if (myModal) {
+                            myModal.hide();
+                        }
+                        location.reload(); // Reload the page to update the role list
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Gagal!",
+                        text: "Terjadi kesalahan saat mengedit role.",
+                        icon: "error",
+                        confirmButtonColor: 'red',
+                        iconColor: 'red'
+                    });
+                }
+            });
+        });
+    });
+
+    // Pop Up Hapus
+    function confirmDelete(button) {
+        const roleId = button.getAttribute('data-id');
+
+        Swal.fire({
+            title: 'Apakah Anda Yakin?',
+            text: "Anda tidak bisa memulihkan data ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Hapus!',
+            confirmButtonColor: 'red',
+            cancelButtonText: 'Tidak, Batal!',
+            iconColor: 'red',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/role/hapus/${roleId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+                }).then(response => {
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Dihapus!',
+                        text: 'Role telah dihapus.',
+                        icon: 'success',
+                        confirmButtonColor: 'red',
+                    }).then(() => {
+                        location.reload(); // Refresh the page after deletion
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'There was a problem deleting the role.',
+                        icon: 'error',
+                        confirmButtonColor: 'red',
+                        iconColor: 'red',
+                    });
+                }
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire({
+                    title: 'Dibatalkan',
+                    text: 'Data role Anda tetap aman :)',
+                    icon: 'error',
+                    confirmButtonColor: 'red',
+                    iconColor: 'red',
+                });
+            }
+        });
+    }
+</script>
+{% endblock %}

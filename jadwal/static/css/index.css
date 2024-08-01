@@ -1,0 +1,376 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Poppins&display=swap');
+body {
+    font-family: 'Poppins', sans-serif;
+    padding-top: 120px;
+}
+
+/* CSS Untuk Navbar */
+.custom-nav {
+    background-color: transparent;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 35px 70px;
+    z-index: 1000;
+    transition: 0.5s;
+}
+.custom-nav.sticky-navbar {
+    background-color: #ffffff;
+    padding: 10px 100px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+.custom-nav .navbar-brand img {
+    width: 30px;
+    height: 30px;
+    margin-top: -7px;
+}
+.custom-nav .navbar-brand span {
+    font-family: 'Caveat Brush', cursive;
+    color: red;
+    font-weight: 400;
+    font-size: 38px;
+    margin-left: 0.4em;
+}
+.custom-nav #navbarNav .navbar-nav .nav-item .nav-link {
+    color: rgba(0, 0, 0, 0.70);
+    font-weight: 400;
+    font-size: 17px;
+    margin-left: 2.4em;
+    transition: 0.3s color ease;
+}
+.custom-nav #navbarNav .navbar-nav .nav-item .nav-link:hover {
+    display: inline-block;
+    color: white;
+    background-color: red;
+    border-radius: 0.5em;
+    padding: 0.5em 1em;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: 0.5s ease;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.3);
+}
+
+/* CSS untuk section Home */
+img#gambar-login {
+    margin-left: 50px;
+}
+.btn-modal-login {
+    display: inline-block;
+    color: white;
+    background-color: red;
+    border-radius: .4em;
+    padding: 0.5em 2em;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: 0.5s ease;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.3);
+}
+.btn-modal-login:hover {
+    background-color: red;
+    border-color: red;
+}
+.btn-modal-cancel {
+    color: red;
+    border: 1px solid red;
+    padding: 0.5em 2em;
+    background-color: transparent;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+.btn-modal-cancel:hover {
+    color: red;
+    background-color: transparent;
+    border: 1px solid red;
+}
+#Home {
+    margin-bottom: 100px;
+}
+#Home p {
+    font-size: 15px;
+    text-align: justify;
+}
+#Home h1 {
+    color: red;
+    font-size: 30px;
+}
+.btn-jadwal {
+    display: inline-block;
+    color: white;
+    background-color: red;
+    border-radius: .4em;
+    padding: 0.5em 2em;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: 0.5s ease;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.3);
+}
+.btn-jadwal:hover {
+    background-color: red;
+    border-color: red;
+}
+.h5-jadwal {
+    font-family: 'Caveat Brush', cursive;
+    color: red;
+    font-size: 35px;
+}
+.btn-cancel {
+    display: inline-block;
+    color: red;
+    border: 1px solid red;
+    background-color: transparent;
+    border-radius: .4em;
+    padding: 0.5em 2em;
+    text-decoration: none;
+    transition: 0.5s ease;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+#Home .btn-login {
+    font-size: 15px;
+    color: red;
+    border: 1px solid red;
+    padding: 0.5em 2em;
+    background-color: transparent;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+/* CSS untuk section Kalender */
+#Kalender {
+    margin-bottom: 100px;
+}
+#Kalender h1 {
+    text-align: center;
+    font-size: 30px;
+}
+#Kalender p {
+    text-align: center;
+    font-size: 15px;
+}
+.fc .fc-button {
+    background-color: red;
+    border-color: red;
+    color: white;
+}
+.fc .fc-button:hover {
+    background-color: darkred;
+    border-color: darkred;
+}
+.fc .fc-button:focus,
+.fc .fc-button:active:focus,
+.fc .fc-button:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+/* Mengubah warna teks dan menghapus garis bawah pada elemen FullCalendar akibat boostrap */
+.fc a {
+    color: inherit;
+    text-decoration: none;
+}
+/* Menambahkan ikon klik pada cursor mouse ketika di atas event */
+.fc-event {
+    cursor: pointer;
+}
+
+/* CSS untuk section Tempat */
+#Tempat {
+    margin-bottom: 50px;
+}
+#Tempat h1 {
+    text-align: center;
+    font-size: 30px;
+}
+#Tempat p {
+    font-size: 15px;
+    text-align: center;
+}
+.table td .description {
+    white-space: pre-wrap; /* Preserves spaces and line breaks */
+    max-width: 700px; /* Maksimum lebar kolom */
+    word-wrap: break-word; /* Memastikan teks tidak melampaui batas kolom */
+    overflow-wrap: break-word; /* Memastikan teks tidak melampaui batas kolom */
+    white-space: pre-line; /* Preserves newlines but collapses consecutive whitespace */
+}
+/* Tambahkan style untuk tabel agar responsive */
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.btn-detail {
+    margin-top: 5px;
+}
+.btn-foto {
+    margin-top: 5px;
+}
+/* CSS untuk section Alur */
+#Alur {
+    margin-bottom: 50px;
+}
+#Alur h1 {
+    text-align: center;
+    font-size: 30px;
+}
+#Alur p {
+    font-size: 15px;
+    text-align: justify;
+}
+.timeline {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    width: 4px;
+    background-color: #dc3545;
+    top: 0;
+    bottom: 0;
+    left: 25px;
+    margin-left: -2px;
+}
+.timeline-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+.timeline-icon {
+    flex: 0 0 50px;
+    height: 50px;
+    background: #f8d7da;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    color: #dc3545;
+    margin-right: 20px;
+    position: relative;
+    z-index: 1;
+}
+.timeline-number {
+    position: absolute;
+    top: -15px;
+    left: -15px;
+    background: #dc3545;
+    color: #fff;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+.timeline-content {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+}
+.timeline-content h3 {
+    margin-top: 0;
+}
+
+/* CSS untuk section Kontak */
+#Kontak h1 {
+    text-align: center;
+    font-size: 30px;
+}
+#Kontak p {
+    font-size: 15px;
+    text-align: justify;
+}
+#Kontak .btn-kirim {
+    display: inline-block;
+    color: white;
+    background-color: red;
+    border-radius: .4em;
+    padding: 0.5em 2em;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: 0.5s ease;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.3);
+}
+.swal-text {
+    font-size: 15px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    body {
+        padding-top: 80px;
+    }
+    .custom-nav {
+        background-color: #ffffff;
+        padding: 8px 10px;
+    }
+    .custom-nav.sticky-navbar {
+        background-color: #ffffff;
+        padding: 8px 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    button.navbar-toggler {
+        position: fixed;
+        right: 0;
+        top: 0;
+        margin-right: 20px;
+        margin-top: 15px;
+    }
+    .custom-nav .navbar-brand span {
+        font-size: 30px;
+    }
+    .btn-detail {
+        margin-bottom: 8px;
+    }
+    .btn-foto {
+        margin-top: 0px;
+    }
+    #Home img {
+        margin-left: 35px;
+    }
+    /* Kalender */
+    .fc-header-toolbar {
+        flex-direction: column; /* Ubah arah menjadi kolom */
+    }
+    .fc-header-toolbar .fc-toolbar-chunk {
+        flex: none; /* Atur ulang ukuran agar menumpuk secara vertikal */
+    }
+    .fc-header-toolbar .fc-left,
+    .fc-header-toolbar .fc-right {
+        justify-content: space-between; /* Sejajarkan tombol prev, next, dan tampilan */
+    }
+    .fc-header-toolbar .fc-center {
+        margin-top: 10px; /* Beri sedikit jarak antara tombol dan judul */
+    }
+    .fc-header-toolbar .fc-toolbar-chunk {
+        margin-bottom: 5px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .custom-nav {
+        background-color: #ffffff;
+        padding: 8px 10px;
+    }
+    #Home img {
+        margin-left: 120px;
+    }
+    .btn-detail {
+        margin-bottom: 8px;
+    }
+    .btn-foto {
+        margin-top: 0px;
+    }
+    .col-md-6 {
+        width: 100%;
+    }
+    img#gambar-login {
+        width: 300px;
+        margin-left: 70px;
+    }
+}
