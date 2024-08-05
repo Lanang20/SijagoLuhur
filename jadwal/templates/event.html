@@ -13,28 +13,28 @@
                     <table class="table table-responsive table-striped table-bordered table-sm table-event" id="myTable">
                         <thead>
                             <tr>
-                                <th scope="col" style="text-align: center; width:3% ;">No.</th>
-                                <th scope="col" style="text-align: center; width: 15%;">Nama</th>
-                                <th scope="col" style="text-align: center; width: 15%;">Mulai</th>
-                                <th scope="col" style="text-align: center; width: 16%;">Selesai</th>
-                                <th scope="col" style="text-align: center; width: 20%;">Deskripsi</th>
+                                <th scope="col" style="text-align: center; width: 3%;">No.</th>
+                                <th scope="col" style="text-align: center; width: 9%;">Nama</th>
+                                <th scope="col" style="text-align: center; width: 14%;">Mulai</th>
+                                <th scope="col" style="text-align: center; width: 15%;">Selesai</th>
+                                <th scope="col" style="text-align: center; width: 24%;">Deskripsi</th>
                                 {% if user.is_superuser %}
                                     <th scope="col" style="width: 8%;">Tempat</th>
                                 {% endif %}
                                 <th scope="col" style="text-align: center;width: 8%;">Status</th>
-                                <th colspan="2" style="text-align: center;width: 15%;">Aksi</th>
+                                <th colspan="2" style="text-align: center;width: 19%;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for event in event_list %}
+                            {% for event in formatted_events %}
                                 <tr>
-                                    <th style="text-align: center;" scope="row">{{ forloop.counter }}</th>
-                                    <td>{{ event.nama }}</td>
-                                    <td>{{ event.tanggal_mulai }}</td>
-                                    <td>{{ event.tanggal_selesai }}</td>
-                                    <td class="description" style="text-align: justify;">{{ event.deskripsi }}</td>
+                                    <th style="text-align: center; width: 3%" scope="row">{{ forloop.counter }}</th>
+                                    <td style="width: 9%">{{ event.nama }}</td>
+                                    <td style="width: 14%">{{ event.tanggal_mulai }}</td>
+                                    <td style="width: 15%">{{ event.tanggal_selesai }}</td>
+                                    <td style="width: 24%" class="description" style="text-align: justify;">{{ event.deskripsi }}</td>
                                     {% if user.is_superuser %}
-                                        <td>{{ event.id_tempat }}</td>
+                                        <td style="width: 8%">{{ event.id_tempat }}</td>
                                         {% if event.status == "disetujui" %}
                                             <td>
                                                 <button type="button" class="btn btn-success btn-disetujui"
@@ -63,11 +63,11 @@
                                             <td class="process"><p>{{ event.status }}</p></td>
                                         {% endif %}
                                     {% endif %}
-                                    <td style="text-align: center; width: 20%;">
-                                        <button type="button" class="btn btn-primary btn-edit"
+                                    <td style="text-align: center; width: 19%;">
+                                        <button type="button" class="btn btn-sm btn-primary btn-edit"
                                             data-bs-toggle="modal" data-bs-target="#EditEvent{{ event.id }}"
                                             data-bs-whatever="@mdo"><i class="far fa-edit me-2"></i>Edit</button>
-                                        <button type="button" class="btn btn-danger btn-hapus"
+                                        <button type="button" class="btn btn-sm btn-danger btn-hapus"
                                             data-id="{{ event.id }}" onclick="confirmDelete(this)">
                                             <i class="fas fa-trash me-2"></i>Hapus</button>
                                     </td>
@@ -178,7 +178,7 @@
                             {% csrf_token %}
                             <!-- Untuk Superuser: Pilih Tempat -->
                             {% if user.is_superuser %}
-                            <div class="mb-3">
+                            <div clas="mb-3">
                                 <label for="editidtempatevent" class="form-label">Tempat</label>
                                 <select id="editidtempatevent" class="form-select" name="id_tempat">
                                     {% for tempat in tempat_list %}

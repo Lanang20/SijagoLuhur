@@ -17,7 +17,7 @@
                                 <th scope="col" style="text-align: center;">No.</th>
                                 <th scope="col" style="text-align: center;">Nama Tempat</th>
                                 <th scope="col" style="text-align: center; width: 700px;">Deskripsi</th>
-                                <th scope="col" style="text-align: center; width: 20%;">Aksi</th>
+                                <th scope="col" style="text-align: center; width: 18%;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="">
@@ -26,11 +26,11 @@
                                     <th  style="text-align: center;" scope="row">{{ forloop.counter }}</th>
                                     <td>{{ tempat.nama }}</td>
                                     <td><div class="description">{{ tempat.deskripsi }}</div></td>
-                                    <td style="text-align: center; width: 20%;">
-                                        <button type="button" class="btn btn-primary btn-edit"
+                                    <td style="text-align: center; width: 18%;">
+                                        <button type="button" class="btn btn-sm btn-primary btn-edit"
                                             data-bs-toggle="modal" data-bs-target="#EditTempat{{ tempat.id }}"
                                             data-bs-whatever="@mdo"><i class="far fa-edit me-2"></i>Edit</button>
-                                        <button type="button" class="btn btn-danger btn-hapus"
+                                        <button type="button" class="btn btn-sm btn-danger btn-hapus"
                                             data-id="{{ tempat.id }}" onclick="confirmDelete(this)">
                                             <i class="fas fa-trash me-2"></i>Hapus</button>
                                     </td>

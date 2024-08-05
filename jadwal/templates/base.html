@@ -166,12 +166,14 @@
                 eventClick: function(info) {
                     const place = info.event.extendedProps.place;
                     const description = info.event.extendedProps.description || '-';
+                    const formattedStart = info.event.extendedProps.formatted_start;
+                    const formattedEnd = info.event.extendedProps.formatted_end;
                     Swal.fire({
                         title: info.event.title,
                         html: `<div style="text-align: left; font-size: 15px;">
                                     <p><strong>Tempat:</strong> ${place}</p>
-                                    <p><strong>Tanggal & Jam Mulai:</strong> ${info.event.start.toLocaleString()}</p>
-                                    <p><strong>Tanggal & Jam Selesai:</strong> ${info.event.end ? info.event.end.toLocaleString() : 'N/A'}</p>
+                                    <p><strong>Tanggal & Jam Mulai:</strong> ${formattedStart}</p>
+                                    <p><strong>Tanggal & Jam Selesai:</strong> ${formattedEnd}</p>
                                     <p style="text-align: justify; white-space: pre-wrap;"><strong>Deskripsi:</strong> ${description}</p>
                                </div>`,
                         confirmButtonColor: 'red',

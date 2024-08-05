@@ -8,7 +8,9 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from datetime import datetime
-from django.utils.timezone import now
+from django.utils.timezone import now, localtime
+from babel.dates import format_datetime
+
 
 # Create your views here.
 def user_login(request):
@@ -39,10 +41,12 @@ def event_list(request):
     for event in events:
         event_list.append({
             'title': event.nama,
-            'start': event.tanggal_mulai.strftime('%Y-%m-%dT%H:%M:%S'),
-            'end': event.tanggal_selesai.strftime('%Y-%m-%dT%H:%M:%S'),
+            'start': localtime(event.tanggal_mulai).strftime('%Y-%m-%dT%H:%M:%S'),  # ISO format
+            'end': localtime(event.tanggal_selesai).strftime('%Y-%m-%dT%H:%M:%S'),  # ISO format
             'description': event.deskripsi,
             'place': event.id_tempat.nama,
+            'formatted_start': format_datetime(localtime(event.tanggal_mulai), "EEEE, d MMMM yyyy HH:mm", locale='id_ID') + " WIB",  # Indonesian format
+            'formatted_end': format_datetime(localtime(event.tanggal_selesai), "EEEE, d MMMM yyyy HH:mm", locale='id_ID') + " WIB",  # Indonesian format
         })
     return JsonResponse(event_list, safe=False)
 
@@ -217,9 +221,23 @@ def event(request):
         event_list = Event.objects.filter(id_tempat=request.user.id_role.id_tempat).order_by('status', 'tanggal_mulai')
         tempat_list = []  # Tidak perlu mengirimkan daftar tempat untuk non-superuser
 
+    # Format the date to Indonesian format
+    formatted_events = []
+    for event in event_list:
+        formatted_events.append({
+            'id': event.id,
+            'nama': event.nama,
+            'tanggal_mulai': format_datetime(localtime(event.tanggal_mulai), "EEEE, d MMMM yyyy HH:mm", locale='id_ID') + " WIB",
+            'tanggal_selesai': format_datetime(localtime(event.tanggal_selesai), "EEEE, d MMMM yyyy HH:mm", locale='id_ID') + " WIB",
+            'deskripsi': event.deskripsi,
+            'id_tempat': event.id_tempat,
+            'status': event.status,
+        })
+
     context = {
-        'event_list': event_list,
-        'tempat_list': tempat_list
+        'formatted_events': formatted_events,
+        'tempat_list': tempat_list,
+        'event_list': event_list
     }
     return render(request, 'event.html', context)
 

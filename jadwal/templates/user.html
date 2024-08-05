@@ -33,10 +33,10 @@
                                     {% endif %}
                                     <td style="text-align: center;">
                                         {% if user.is_superuser %}
-                                        <button type="button" class="btn btn-secondary">
+                                        <button type="button" class="btn btn-sm btn-secondary">
                                             <i class="fas fa-trash me-2"></i>Hapus</button>
                                         {% else %}
-                                        <button type="button" class="btn btn-danger"
+                                        <button type="button" class="btn btn-sm btn-danger"
                                             data-id="{{ user.id }}" onclick="confirmDelete(this)">
                                             <i class="fas fa-trash me-2"></i>Hapus</button>
                                         {% endif %}
