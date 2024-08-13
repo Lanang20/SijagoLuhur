@@ -1,0 +1,16 @@
+1. Install Python
+2. Buat env, kemudian aktifkan (env\Scripts\activate)
+3. pip install django
+4. pip install mysqlclient
+5. pip install pillow (untuk penanganan gambar pada python)
+6. pip install Babel (Untuk format tanggal WIB)
+7. Untuk pengaturan database silahkan buka file settings.py
+8. Lakukan migrasi database pada file models.py apabila tidak mengimport database secara manual, abaikan jika sudah mengimport. 
+    Pertama, cd ke SijagoLuhur,
+    Kedua, ketikan "python manage.py make migrations", 
+    kemudian ketikan "python manage.py migrate"
+9. CD ke SijagoLuhur, jalankan server (python manage.py runserver)
+
+// Form Kontak Pesan di Landing Page
+Silahkan ganti email dan kata sandi aplikasi akun Gmail di bagian file settings.py, 
+untuk penanganan pengiriman email di landing page.
