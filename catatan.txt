@@ -8,7 +8,8 @@
 8. Lakukan migrasi database pada file models.py apabila tidak mengimport database secara manual, abaikan jika sudah mengimport. 
     Pertama, cd ke SijagoLuhur,
     Kedua, ketikan "python manage.py make migrations", 
-    kemudian ketikan "python manage.py migrate"
+    kemudian ketikan "python manage.py migrate",
+    Lalu, buat superuser dengan perintah "python manage.py createsuperuser",
 9. CD ke SijagoLuhur, jalankan server (python manage.py runserver)
 
 // Form Kontak Pesan di Landing Page
