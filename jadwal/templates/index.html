@@ -311,9 +311,24 @@
             }
         });
         // Tambahkan event listener untuk button Cancel
-        document.querySelector('.btn-modal-cancel').addEventListener('click', function () {
-            // Mengarahkan ke halaman landingpage
-            window.location.href = '{% url "landing_page" %}';
+        document.addEventListener('DOMContentLoaded', function () {
+            // Cek apakah elemen pesan kesalahan ada
+            var errorMsg = document.querySelector('.alert-danger');
+            
+            // Jika pesan kesalahan ada, tambahkan event listener untuk button Cancel
+            if (errorMsg) {
+                document.querySelector('.btn-modal-cancel').addEventListener('click', function () {
+                    // Mengarahkan ke halaman landingpage
+                    window.location.href = '{% url "landing_page" %}';
+                });
+            } else {
+                // Jika tidak ada pesan kesalahan, hapus data form saat Cancel diklik
+                document.querySelector('.btn-modal-cancel').addEventListener('click', function () {
+                    // Hapus data di form
+                    document.getElementById('username-login').value = '';
+                    document.getElementById('password-login').value = '';
+                });
+            }
         });
 
         // Navbar
