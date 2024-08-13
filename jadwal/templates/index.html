@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIJAGO LUHUR | Landing Page</title>
+    <link rel="shortcut icon" href="{% static 'images/logo.png' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" 
         integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -87,12 +88,12 @@
                                                                             </div>
                                                                         {% endif %}
                                                                         <div class="mb-1 col-10">
-                                                                            <label for="recipient-name" class="col-form-label">Username</label>
-                                                                            <input type="text" name="username" class="form-control" id="recipient-name" required>
+                                                                            <label for="username-login" class="col-form-label">Username</label>
+                                                                            <input type="text" name="username" class="form-control" id="username-login" required>
                                                                         </div>
                                                                         <div class="mb-3 col-10">
-                                                                            <label for="recipient-name" class="col-form-label">Password</label>
-                                                                            <input type="password" name="password" class="form-control" id="recipient-name" required>
+                                                                            <label for="password-login" class="col-form-label">Password</label>
+                                                                            <input type="password" name="password" class="form-control" id="password-login" required>
                                                                         </div>
                                                                         <div class="mb-3">
                                                                             <button type="submit" class="btn btn-danger btn-sm btn-modal-login px-4 me-md-2">Login</button>
