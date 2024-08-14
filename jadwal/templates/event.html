@@ -32,7 +32,7 @@
                                     <td style="width: 9%">{{ event.nama }}</td>
                                     <td style="width: 14%">{{ event.tanggal_mulai }}</td>
                                     <td style="width: 15%">{{ event.tanggal_selesai }}</td>
-                                    <td style="width: 24%" class="description" style="text-align: justify;">{{ event.deskripsi }}</td>
+                                    <td style="width: 24%"><div class="description">{{ event.deskripsi }}</div></td>
                                     {% if user.is_superuser %}
                                         <td style="width: 8%">{{ event.id_tempat }}</td>
                                         {% if event.status == "disetujui" %}

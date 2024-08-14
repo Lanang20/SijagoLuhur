@@ -169,6 +169,10 @@ img#gambar-login {
 .fc-event {
     cursor: pointer;
 }
+/* Mengubah warna teks "1+ more" menjadi biru */
+.fc-direction-ltr .fc-daygrid-more-link {
+    color: blue;
+}
 
 /* CSS untuk section Tempat */
 #Tempat {
@@ -333,6 +337,12 @@ img#gambar-login {
     #Home img {
         margin-left: 35px;
     }
+    .table td .description {
+        width: 300px;
+    }
+    .table td .nama-tempat {
+        width: 200px;
+    }
     /* Kalender */
     .fc-header-toolbar {
         flex-direction: column; /* Ubah arah menjadi kolom */
@@ -349,6 +359,19 @@ img#gambar-login {
     }
     .fc-header-toolbar .fc-toolbar-chunk {
         margin-bottom: 5px;
+    }
+    /* Field Entries per pages dan Pencarian tabel */
+    .dataTable-wrapper .dataTable-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .dataTable-wrapper .dataTable-top .dataTable-dropdown,
+    .dataTable-wrapper .dataTable-top .dataTable-search {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    .dataTable-wrapper .dataTable-top .dataTable-search input {
+        width: 100%;
     }
 }
 

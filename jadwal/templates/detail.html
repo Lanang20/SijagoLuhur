@@ -58,9 +58,9 @@
                     {% for fasilitas in fasilitas_list %}
                         <tr>
                             <th style="text-align: center;" scope="row">{{ forloop.counter }}</th>
-                            <td>{{ fasilitas.objek_retribusi }}</td>
-                            <td><div class="description">{{ fasilitas.rincian }}</td></div>
-                            <td>{{ fasilitas.keterangan }}</td>
+                            <td><div class="objek_retribusi">{{ fasilitas.objek_retribusi }}</div></td>
+                            <td><div class="description">{{ fasilitas.rincian }}</div></td>
+                            <td><div class="keterangan">{{ fasilitas.keterangan }}</div></td>
                         </tr>
                     {% empty %}
                         <tr>

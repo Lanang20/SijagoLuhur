@@ -153,7 +153,7 @@
                     {% for tempat in tempat_list %}
                         <tr>
                             <th  style="text-align: center;" scope="row">{{ forloop.counter }}</th>
-                            <td>{{ tempat.nama }}</td>
+                            <td><div class="nama-tempat">{{ tempat.nama }}</div></td>
                             <td><div class="description">{{ tempat.deskripsi }}</div></td>
                             <td style="text-align: center; width: 20%;">
                                 <a href="{% url 'tempat_detail' tempat.id %}" class="btn btn-danger btn-detail"><i class="fa-solid fa-circle-info"></i> Detail</a>
@@ -181,7 +181,7 @@
                 Alur Peminjaman Tempat
             </h1>
             <p class="lead" style="text-align: center;">
-                Untuk mempermudah proses peminjaman tempat di aplikasi SIJAGO LUHUR, berikut adalah langkah-langkah yang harus Anda ikuti. 
+                Berikut adalah langkah-langkah proses peminjaman tempat yang harus Anda ikuti. 
                 Dengan mengikuti alur ini, Anda dapat memastikan proses peminjaman berjalan dengan lancar dan sesuai dengan ketentuan yang berlaku.
             </p>
             <div class="timeline">
@@ -344,7 +344,7 @@
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,dayGridWeek,listYear'
+                    right: 'dayGridMonth,dayGridWeek,listMonth'
                 },
                 dayMaxEventRows: true, // for all non-TimeGrid views
                 views: {

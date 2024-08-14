@@ -24,7 +24,7 @@
                             {% for tempat in tempat_list %}
                                 <tr>
                                     <th  style="text-align: center;" scope="row">{{ forloop.counter }}</th>
-                                    <td>{{ tempat.nama }}</td>
+                                    <td><div class="nama-tempat">{{ tempat.nama }}</div></td>
                                     <td><div class="description">{{ tempat.deskripsi }}</div></td>
                                     <td style="text-align: center; width: 18%;">
                                         <button type="button" class="btn btn-sm btn-primary btn-edit"
