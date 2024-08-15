@@ -126,6 +126,16 @@
                 Di halaman ini, Anda dapat melihat jadwal kegiatan yang diadakan di GOR dan Buper yang tersedia. 
                 Klik pada acara untuk melihat detail lebih lanjut.
             </p>
+            <div class="filter">
+                <select id="filter-tempat" class="form-select mb-4 w-auto">
+                    <option value="" selected disabled>Pilih Tempat</option>
+                    <option value="">Semua Tempat</option>
+                    {% for tempat in tempat_list %}
+                        <option value="{{ tempat.id }}">{{ tempat.nama }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
             <div id='calendar'></div>
         </div>
     </section>
@@ -340,6 +350,7 @@
         // Calendar
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
+            var filterTempat = document.getElementById('filter-tempat');  // Menambahkan elemen dropdown filter
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 headerToolbar: {
                     left: 'prev,next today',
@@ -353,7 +364,14 @@
                     }
                 },
                 events: function(fetchInfo, successCallback, failureCallback) {
-                    fetch('/events/')
+                    // Fetch events dari server berdasarkan tempat yang dipilih
+                    var tempatId = filterTempat.value;
+                    var url = '/events/';
+                    if (tempatId) {
+                        url += '?tempat_id=' + tempatId;
+                    }
+
+                    fetch(url)
                         .then(response => response.json())
                         .then(events => {
                             // Menambahkan properti warna merah pada setiap event
@@ -383,6 +401,10 @@
                 displayEventTime: true
             });
             calendar.render();
+            // Re-render calendar ketika tempat dipilih/diganti
+            filterTempat.addEventListener('change', function() {
+                calendar.refetchEvents();
+            });
         });
 
         // Pop Up Image

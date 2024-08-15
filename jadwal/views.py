@@ -29,14 +29,26 @@ def user_login(request):
     return render(request, 'index.html', {'msg': msg})
 
 def event_list(request):
+    tempat_id = request.GET.get('tempat_id')
+    
     if request.user.is_superuser:
-        events = Event.objects.filter(status='disetujui').all()
+        if tempat_id:
+            events = Event.objects.filter(status='disetujui', id_tempat=tempat_id).all()
+        else:
+            events = Event.objects.filter(status='disetujui').all()
     elif request.user.is_staff:
         # Assume the user is an Administrator and has an associated Role
         role = Role.objects.get(user=request.user)
-        events = Event.objects.filter(status='disetujui', id_tempat= role.id_tempat).all()
+        if tempat_id:
+            events = Event.objects.filter(status='disetujui', id_tempat=tempat_id).all()
+        else:
+            events = Event.objects.filter(status='disetujui', id_tempat=role.id_tempat).all()
     else:
-        events = Event.objects.filter(status='disetujui').all()
+        if tempat_id:
+            events = Event.objects.filter(status='disetujui', id_tempat=tempat_id).all()
+        else:
+            events = Event.objects.filter(status='disetujui').all()
+
     event_list = []
     for event in events:
         event_list.append({
@@ -94,11 +106,13 @@ def dashboard(request):
     event_diproses = Event.objects.filter(status="diproses").count()
     total_tempat = Tempat.objects.all().count()
     total_user = User.objects.all().count()
+    tempat_list = Tempat.objects.all()
     context = {
         'upcoming_events': upcoming_events,
         'event_diproses': event_diproses,
         'total_tempat': total_tempat,
         'total_user': total_user,
+        'tempat_list': tempat_list,
     }
     return render(request, 'dashboard.html', context)
 

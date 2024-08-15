@@ -54,6 +54,17 @@
     <div class="kalender">
         <div class="cardKalender">
             <div class="cardHeader">
+                {% if user.is_superuser %}
+                <div class="filter">
+                    <select id="filter-tempat" class="form-select mb-4 w-auto">
+                        <option value="" selected disabled>Pilih Tempat</option>
+                        <option value="">Semua Tempat</option>
+                        {% for tempat in tempat_list %}
+                            <option value="{{ tempat.id }}">{{ tempat.nama }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
                 <div id='calendar'></div>
             </div>
         </div>

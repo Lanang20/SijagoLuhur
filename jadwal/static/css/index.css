@@ -173,6 +173,10 @@ img#gambar-login {
 .fc-direction-ltr .fc-daygrid-more-link {
     color: blue;
 }
+.filter {
+    display: flex;
+    justify-content: end;
+}
 
 /* CSS untuk section Tempat */
 #Tempat {
@@ -372,6 +376,10 @@ img#gambar-login {
     }
     .dataTable-wrapper .dataTable-top .dataTable-search input {
         width: 100%;
+    }
+    .filter {
+        display: flex;
+        justify-content: center;
     }
 }
 
