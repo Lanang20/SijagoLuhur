@@ -281,6 +281,18 @@ body {
 .fc-event {
     cursor: pointer;
 }
+/* CSS untuk mengatur popover akibat efek css Main */
+.fc .fc-popover {
+    position: absolute;
+    top: 50%; /* Menempatkan popover di tengah layar secara vertikal */
+    left: 50%; /* Menempatkan popover di tengah layar secara horizontal */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Memberikan bayangan agar popover terlihat seperti modal */
+    background: white; /* Background putih untuk popover */
+}
+/* Mengubah warna teks "1+ more" menjadi biru */
+.fc-direction-ltr .fc-daygrid-more-link {
+    color: blue;
+}
 
 /* ================== Tempat ============== */
 .tempat {
