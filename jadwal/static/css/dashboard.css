@@ -295,7 +295,10 @@ body {
 }
 .filter {
     display: flex;
-    justify-content: end;
+    justify-content: space-between;
+}
+.filter select {
+    width: auto;
 }
 
 /* ================== Tempat ============== */
@@ -607,7 +610,10 @@ body {
         width: 100%;
     }
     .filter {
-        display: flex;
-        justify-content: center;
+        flex-direction: column; /* Mengatur dropdown menjadi vertikal */
+        align-items: center; /* Menyusun dropdown di tengah secara horizontal */
+    }
+    .filter select {
+        width: 100%; /* Agar dropdown mengambil lebar penuh */
     }
 }

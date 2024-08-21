@@ -17,7 +17,8 @@
                                 <th scope="col" style="text-align: center; width: 9%;">Nama</th>
                                 <th scope="col" style="text-align: center; width: 14%;">Mulai</th>
                                 <th scope="col" style="text-align: center; width: 15%;">Selesai</th>
-                                <th scope="col" style="text-align: center; width: 24%;">Deskripsi</th>
+                                <th scope="col" style="text-align: center; width: 20%;">Deskripsi</th>
+                                <th scope="col" style="text-align: center; width: 4%;">Kategori</th>
                                 {% if user.is_superuser %}
                                     <th scope="col" style="width: 8%;">Tempat</th>
                                 {% endif %}
@@ -32,35 +33,36 @@
                                     <td style="width: 9%">{{ event.nama }}</td>
                                     <td style="width: 14%">{{ event.tanggal_mulai }}</td>
                                     <td style="width: 15%">{{ event.tanggal_selesai }}</td>
-                                    <td style="width: 24%"><div class="description">{{ event.deskripsi }}</div></td>
+                                    <td style="width: 20%"><div class="description">{{ event.deskripsi }}</div></td>
+                                    <td style="width: 4%">{{ event.kategori_jadwal }}</td>
                                     {% if user.is_superuser %}
                                         <td style="width: 8%">{{ event.id_tempat }}</td>
-                                        {% if event.status == "disetujui" %}
-                                            <td>
+                                        {% if event.status == "Disetujui" %}
+                                            <td style="text-align: center;">
                                                 <button type="button" class="btn btn-success btn-disetujui"
                                                 data-bs-toggle="modal" data-bs-target="#EditStatus{{ event.id }}"
                                                 data-bs-whatever="@mdo">{{ event.status }}</button>
                                             </td>
-                                        {% elif event.status == "ditolak" %}
-                                            <td>
+                                        {% elif event.status == "Ditolak" %}
+                                            <td style="text-align: center;">
                                                 <button type="button" class="btn btn-danger btn-ditolak"
                                                 data-bs-toggle="modal" data-bs-target="#EditStatus{{ event.id }}"
                                                 data-bs-whatever="@mdo">{{ event.status }}</button>
                                             </td>
-                                        {% elif event.status == "diproses" %}
-                                            <td>
+                                        {% elif event.status == "Diproses" %}
+                                            <td style="text-align: center;">
                                                 <button type="button" style="color: white;" class="btn btn-warning btn-diproses"
                                                 data-bs-toggle="modal" data-bs-target="#EditStatus{{ event.id }}"
                                                 data-bs-whatever="@mdo">{{ event.status }}</button>
                                             </td>
                                         {% endif %}
                                     {% else %}
-                                        {% if event.status == "disetujui" %}
-                                            <td class="approved"><p>{{ event.status }}</p></td>
-                                        {% elif event.status == "ditolak" %}
-                                            <td class="denied"><p>{{ event.status }}</p></td>
-                                        {% elif event.status == "diproses" %}
-                                            <td class="process"><p>{{ event.status }}</p></td>
+                                        {% if event.status == "Disetujui" %}
+                                            <td style="text-align: center;" class="approved"><p>{{ event.status }}</p></td>
+                                        {% elif event.status == "Ditolak" %}
+                                            <td style="text-align: center;" class="denied"><p>{{ event.status }}</p></td>
+                                        {% elif event.status == "Diproses" %}
+                                            <td style="text-align: center;" class="process"><p>{{ event.status }}</p></td>
                                         {% endif %}
                                     {% endif %}
                                     <td style="text-align: center; width: 19%;">
@@ -137,20 +139,30 @@
                                 <textarea style="height: 95px;" class="form-control" id="deskripsievent" name="deskripsi" required></textarea>
                             </div>
 
+                            <!-- Dropdown Kategori Jadwal -->
+                            <div class="mb-3">
+                                <label for="kategori_jadwal" class="form-label">Kategori Jadwal</label>
+                                <select id="kategori_jadwal" class="form-select" name="kategori_jadwal" required>
+                                    <option selected disabled>Pilih...</option>
+                                    <option value="Rutin">Rutin</option>
+                                    <option value="Tidak Rutin">Tidak Rutin</option>
+                                </select>
+                            </div>
+
                             <!-- Untuk Superuser: Pilih Status -->
                             {% if user.is_superuser %}
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
                                 <select id="status" class="form-select" name="status" required>
                                     <option selected disabled>Pilih...</option>
-                                    <option value="diproses">Diproses</option>
-                                    <option value="disetujui">Disetujui</option>
-                                    <option value="ditolak">Ditolak</option>
+                                    <option value="Diproses">Diproses</option>
+                                    <option value="Disetujui">Disetujui</option>
+                                    <option value="Ditolak">Ditolak</option>
                                 </select>
                             </div>
                             {% else %}
                             <!-- Untuk Administrator: Status Tersembunyi -->
-                            <input type="hidden" id="status" name="status" value="diproses">
+                            <input type="hidden" id="status" name="status" value="Diproses">
                             {% endif %}
 
                             <div class="modal-footer">
@@ -221,24 +233,35 @@
                                 <label for="editdeskripsievent" class="col-form-label">Deskripsi</label>
                                 <textarea style="height: 95px;" class="form-control" id="editdeskripsievent" name="deskripsi" required>{{ event.deskripsi }}</textarea>
                             </div>
+
+                            <!-- Dropdown Kategori Jadwal -->
+                            <div class="mb-3">
+                                <label for="kategori_jadwal" class="form-label">Kategori Jadwal</label>
+                                <select id="kategori_jadwal" class="form-select" name="kategori_jadwal" required>
+                                    <option selected disabled>Pilih...</option>
+                                    <option value="Rutin" {% if event.kategori_jadwal == 'Rutin' %}selected{% endif %}>Rutin</option>
+                                    <option value="Tidak Rutin" {% if event.kategori_jadwal == 'Tidak Rutin' %}selected{% endif %}>Tidak Rutin</option>
+                                </select>
+                            </div>
+
                             <!-- Untuk Superuser: Pilih Status -->
                             {% if user.is_superuser %}
                             <div class="mb-3">
                                 <label for="editstatus" class="form-label">Status</label>
                                 <select id="editstatus" class="form-select" name="status">
-                                    <option value="diproses" {% if event.status == 'diproses' %}selected{% endif %}>Diproses</option>
-                                    <option value="disetujui" {% if event.status == 'disetujui' %}selected{% endif %}>Disetujui</option>
-                                    <option value="ditolak" {% if event.status == 'ditolak' %}selected{% endif %}>Ditolak</option>
+                                    <option value="Diproses" {% if event.status == 'Diproses' %}selected{% endif %}>Diproses</option>
+                                    <option value="Disetujui" {% if event.status == 'Disetujui' %}selected{% endif %}>Disetujui</option>
+                                    <option value="Ditolak" {% if event.status == 'Ditolak' %}selected{% endif %}>Ditolak</option>
                                 </select>
                             </div>
                             {% else %}
                             <!-- Untuk Administrator: Status Tersembunyi -->
-                                {% if event.status == 'disetujui' %}
-                                    <input type="hidden" id="editstatus" name="status" value="disetujui">
-                                {% elif event.status == 'ditolak' %}
-                                    <input type="hidden" id="editstatus" name="status" value="ditolak">
+                                {% if event.status == 'Disetujui' %}
+                                    <input type="hidden" id="editstatus" name="status" value="Disetujui">
+                                {% elif event.status == 'Ditolak' %}
+                                    <input type="hidden" id="editstatus" name="status" value="Ditolak">
                                 {% else %}
-                                    <input type="hidden" id="editstatus" name="status" value="diproses">
+                                    <input type="hidden" id="editstatus" name="status" value="Diproses">
                                 {% endif %}
                             {% endif %}
 
@@ -275,9 +298,9 @@
                             <input type="hidden" name="deskripsi" value="{{ event.deskripsi }}">
                             <select id="status" class="form-select" name="status" required>
                                 <option selected disabled value="">Pilih...</option>
-                                <option value="diproses">Diproses</option>
-                                <option value="disetujui">Disetujui</option>
-                                <option value="ditolak">Ditolak</option>
+                                <option value="Diproses">Diproses</option>
+                                <option value="Disetujui">Disetujui</option>
+                                <option value="Ditolak">Ditolak</option>
                             </select>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>

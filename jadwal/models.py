@@ -35,9 +35,13 @@ class Fasilitas(models.Model):
 
 class Event(models.Model):
     STATUS_CHOICES = [
-        ('disetujui', 'Disetujui'),
-        ('diproses', 'Diproses'),
-        ('ditolak', 'Ditolak'),
+        ('Disetujui', 'Disetujui'),
+        ('Diproses', 'Diproses'),
+        ('Ditolak', 'Ditolak'),
+    ]
+    KATEGORI_CHOICES = [
+        ('Rutin', 'Rutin'),
+        ('Tidak Rutin', 'Tidak Rutin'),
     ]
 
     id_tempat = models.ForeignKey(Tempat, on_delete=models.CASCADE)
@@ -46,6 +50,7 @@ class Event(models.Model):
     tanggal_selesai = models.DateTimeField()
     deskripsi = models.TextField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='diproses')
+    kategori_jadwal = models.CharField(max_length=20, choices=KATEGORI_CHOICES, default='Tidak Rutin')
 
     def __str__(self):
         return self.nama

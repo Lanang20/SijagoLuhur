@@ -123,8 +123,6 @@
         // Panggil fungsi saat ukuran layar berubah
         window.addEventListener('resize', checkScreenSize);
 
-
-
         toggle.onclick = function () {
             navigation.classList.toggle("active");
             main.classList.toggle("active");
@@ -134,67 +132,6 @@
         window.addEventListener('scroll', function(){
             var navbar = document.querySelector('.topbar');
             navbar.classList.toggle('sticky-topbar', window.scrollY > 0);
-        });
-    </script>
-    <!-- Calendar -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var filterTempat = document.getElementById('filter-tempat');  // Menambahkan elemen dropdown filter
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,dayGridWeek,listMonth'
-                },
-                dayMaxEventRows: true, // for all non-TimeGrid views
-                views: {
-                    timeGrid: {
-                        dayMaxEventRows: 6 // adjust to 2 only for timeGridWeek/timeGridDay
-                    }
-                },
-                events: function(fetchInfo, successCallback, failureCallback) {
-                    // Fetch events dari server berdasarkan tempat yang dipilih
-                    var tempatId = filterTempat.value;
-                    var url = '/events/';
-                    if (tempatId) {
-                        url += '?tempat_id=' + tempatId;
-                    }
-
-                    fetch(url)
-                        .then(response => response.json())
-                        .then(events => {
-                            // Menambahkan properti warna merah pada setiap event
-                            events.forEach(event => {
-                                event.color = 'red';
-                            });
-                            successCallback(events);
-                        })
-                        .catch(error => failureCallback(error));
-                },
-                eventClick: function(info) {
-                    const place = info.event.extendedProps.place;
-                    const description = info.event.extendedProps.description || '-';
-                    const formattedStart = info.event.extendedProps.formatted_start;
-                    const formattedEnd = info.event.extendedProps.formatted_end;
-                    Swal.fire({
-                        title: info.event.title,
-                        html: `<div style="text-align: left; font-size: 15px;">
-                                    <p><strong>Tempat:</strong> ${place}</p>
-                                    <p><strong>Tanggal & Jam Mulai:</strong> ${formattedStart}</p>
-                                    <p><strong>Tanggal & Jam Selesai:</strong> ${formattedEnd}</p>
-                                    <p style="text-align: justify; white-space: pre-wrap;"><strong>Deskripsi:</strong> ${description}</p>
-                               </div>`,
-                        confirmButtonColor: 'red',
-                    });
-                },
-                displayEventTime: true
-            });
-            calendar.render();
-            // Re-render calendar ketika tempat dipilih/diganti
-            filterTempat.addEventListener('change', function() {
-                calendar.refetchEvents();
-            });
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" 

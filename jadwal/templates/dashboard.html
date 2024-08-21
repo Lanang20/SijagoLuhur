@@ -54,19 +54,118 @@
     <div class="kalender">
         <div class="cardKalender">
             <div class="cardHeader">
-                {% if user.is_superuser %}
                 <div class="filter">
-                    <select id="filter-tempat" class="form-select mb-4 w-auto">
+                    {% if user.is_superuser %}
+                    <select id="filter-tempat" class="form-select mb-4">
                         <option value="" selected disabled>Pilih Tempat</option>
                         <option value="">Semua Tempat</option>
                         {% for tempat in tempat_list %}
                             <option value="{{ tempat.id }}">{{ tempat.nama }}</option>
                         {% endfor %}
                     </select>
+                    {% endif %}
+                    <select id="filter-kategori" class="form-select mb-4">
+                        <option value="" selected disabled>Pilih Kategori Jadwal</option>
+                        <option value="">Semua Kategori</option>
+                        <option value="Rutin">Rutin</option>
+                        <option value="Tidak Rutin">Tidak Rutin</option>
+                    </select>
                 </div>
-                {% endif %}
                 <div id='calendar'></div>
             </div>
         </div>
     </div>
+
+<script>
+    // Menghapus autofocus pada dropdown
+    document.getElementById('filter-tempat').addEventListener('change', function() {
+        this.blur();
+    });
+    document.getElementById('filter-kategori').addEventListener('change', function() {
+        this.blur();
+    });
+
+    // Calendar
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var filterTempat = document.getElementById('filter-tempat');  // Dropdown filter tempat
+        var filterKategori = document.getElementById('filter-kategori');  // Dropdown filter kategori
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,dayGridWeek,listMonth'
+            },
+            dayMaxEventRows: true,
+            views: {
+                timeGrid: {
+                    dayMaxEventRows: 6
+                }
+            },
+            events: function(fetchInfo, successCallback, failureCallback) {
+                var tempatId = filterTempat ? filterTempat.value : null;  // Check if filterTempat exists
+                var kategoriJadwal = filterKategori.value;  // Ambil nilai kategori
+
+                var url = '/events/';
+                var params = new URLSearchParams();
+
+                if (tempatId) {
+                    params.append('tempat_id', tempatId);
+                }
+
+                if (kategoriJadwal) {
+                    params.append('kategori_jadwal', kategoriJadwal);
+                }
+
+                fetch(url + '?' + params.toString())
+                    .then(response => response.json())
+                    .then(events => {
+                        events.forEach(event => {
+                            event.color = (event.kategori_jadwal === 'Rutin') ? 'black' : 'red';
+                        });
+                        successCallback(events);
+                    })
+                    .catch(error => failureCallback(error));
+            },
+            eventClick: function(info) {
+                const place = info.event.extendedProps.place;
+                const description = info.event.extendedProps.description || '-';
+                const formattedStart = info.event.extendedProps.formatted_start;
+                const formattedEnd = info.event.extendedProps.formatted_end;
+                const kategoriJadwal = info.event.extendedProps.kategori_jadwal;
+
+                let kategoriHtml = '';
+                if (kategoriJadwal === 'Rutin') {
+                    kategoriHtml = `<p><strong>Kategori Jadwal:</strong> ${kategoriJadwal}</p>`;
+                }
+
+                Swal.fire({
+                    title: info.event.title,
+                    html: `<div style="text-align: left; font-size: 15px;">
+                                <p><strong>Tempat:</strong> ${place}</p>
+                                <p><strong>Tanggal & Jam Mulai:</strong> ${formattedStart}</p>
+                                <p><strong>Tanggal & Jam Selesai:</strong> ${formattedEnd}</p>
+                                ${kategoriHtml}
+                                <p style="text-align: justify; white-space: pre-wrap;"><strong>Deskripsi:</strong> ${description}</p>
+                        </div>`,
+                    confirmButtonColor: 'red',
+                });
+            },
+            // menampilkan waktu
+            displayEventTime: false
+        });
+        calendar.render();
+
+        // Re-render calendar ketika tempat atau kategori dipilih/diganti
+        if (filterTempat) {
+            filterTempat.addEventListener('change', function() {
+                calendar.refetchEvents();
+            });
+        }
+
+        filterKategori.addEventListener('change', function() {
+            calendar.refetchEvents();
+        });
+    });
+</script>
 {% endblock %}

@@ -30,24 +30,31 @@ def user_login(request):
 
 def event_list(request):
     tempat_id = request.GET.get('tempat_id')
-    
+    kategori_jadwal = request.GET.get('kategori_jadwal')
+
     if request.user.is_superuser:
+        # Superuser dapat melihat semua data
         if tempat_id:
-            events = Event.objects.filter(status='disetujui', id_tempat=tempat_id).all()
+            events = Event.objects.filter(status='Disetujui', id_tempat=tempat_id)
         else:
-            events = Event.objects.filter(status='disetujui').all()
+            events = Event.objects.filter(status='Disetujui')
     elif request.user.is_staff:
-        # Assume the user is an Administrator and has an associated Role
+        # Asumsikan user adalah Administrator dan memiliki Role terkait
         role = Role.objects.get(user=request.user)
         if tempat_id:
-            events = Event.objects.filter(status='disetujui', id_tempat=tempat_id).all()
+            events = Event.objects.filter(status='Disetujui', id_tempat=tempat_id)
         else:
-            events = Event.objects.filter(status='disetujui', id_tempat=role.id_tempat).all()
+            events = Event.objects.filter(status='Disetujui', id_tempat=role.id_tempat)
     else:
+        # Pengguna biasa hanya bisa melihat event yang disetujui
         if tempat_id:
-            events = Event.objects.filter(status='disetujui', id_tempat=tempat_id).all()
+            events = Event.objects.filter(status='Disetujui', id_tempat=tempat_id)
         else:
-            events = Event.objects.filter(status='disetujui').all()
+            events = Event.objects.filter(status='Disetujui')
+
+    # Tambahkan filter kategori_jadwal jika dipilih
+    if kategori_jadwal:
+        events = events.filter(kategori_jadwal=kategori_jadwal)
 
     event_list = []
     for event in events:
@@ -59,6 +66,7 @@ def event_list(request):
             'place': event.id_tempat.nama,
             'formatted_start': format_datetime(localtime(event.tanggal_mulai), "EEEE, d MMMM yyyy HH:mm", locale='id_ID') + " WIB",  # Indonesian format
             'formatted_end': format_datetime(localtime(event.tanggal_selesai), "EEEE, d MMMM yyyy HH:mm", locale='id_ID') + " WIB",  # Indonesian format
+            'kategori_jadwal': event.kategori_jadwal,
         })
     return JsonResponse(event_list, safe=False)
 
@@ -246,6 +254,7 @@ def event(request):
             'deskripsi': event.deskripsi,
             'id_tempat': event.id_tempat,
             'status': event.status,
+            'kategori_jadwal': event.kategori_jadwal,
         })
 
     context = {
@@ -266,6 +275,7 @@ def tambah_event(request):
         jam_selesai = request.POST.get('jam_selesai')
         deskripsi = request.POST.get('deskripsi')
         status = request.POST.get('status')
+        kategori_jadwal = request.POST.get('kategori_jadwal')
 
         # Parse waktu mulai dan selesai
         mulai = f"{tanggal_mulai} {jam_mulai}"
@@ -278,7 +288,8 @@ def tambah_event(request):
             tanggal_mulai=mulai,
             tanggal_selesai=selesai,
             deskripsi=deskripsi,
-            status=status
+            status=status,
+            kategori_jadwal=kategori_jadwal,
         )
         return JsonResponse({'message': 'Event berhasil ditambahkan!'}, status=200)
     
@@ -296,6 +307,7 @@ def edit_event(request, event_id):
         jam_selesai = request.POST.get('jam_selesai')
         deskripsi = request.POST.get('deskripsi')
         status = request.POST.get('status')
+        kategori_jadwal = request.POST.get('kategori_jadwal')
           
         tempat = get_object_or_404(Tempat, id=id_tempat)
         # Parse waktu mulai dan selesai
@@ -308,6 +320,7 @@ def edit_event(request, event_id):
         event.tanggal_selesai = selesai
         event.deskripsi = deskripsi
         event.status = status
+        event.kategori_jadwal = kategori_jadwal
         event.save()
         return JsonResponse({'message': 'Event berhasil diupdate!'}, status=200)
     
@@ -325,6 +338,7 @@ def edit_status(request, event_id):
         jam_selesai = request.POST.get('jam_selesai')
         deskripsi = request.POST.get('deskripsi')
         status = request.POST.get('status')
+        kategori_jadwal = request.POST.get('kategori_jadwal')
           
         tempat = get_object_or_404(Tempat, id=id_tempat)
         # Parse waktu mulai dan selesai
@@ -337,6 +351,7 @@ def edit_status(request, event_id):
         event.tanggal_selesai = selesai
         event.deskripsi = deskripsi
         event.status = status
+        event.kategori_jadwal = kategori_jadwal
         event.save()
         return JsonResponse({'message': 'Status berhasil diupdate!'}, status=200)
     

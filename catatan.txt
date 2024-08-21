@@ -7,7 +7,7 @@
 7. Untuk pengaturan database silahkan buka file settings.py
 8. Lakukan migrasi database pada file models.py apabila tidak mengimport database secara manual, abaikan jika sudah mengimport. 
     Pertama, cd ke SijagoLuhur,
-    Kedua, ketikan "python manage.py make migrations", 
+    Kedua, ketikan "python manage.py makemigrations", 
     kemudian ketikan "python manage.py migrate",
     Lalu, buat superuser dengan perintah "python manage.py createsuperuser",
 9. CD ke SijagoLuhur, jalankan server (python manage.py runserver)
