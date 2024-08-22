@@ -31,8 +31,8 @@
                                 <tr>
                                     <th style="text-align: center; width: 3%" scope="row">{{ forloop.counter }}</th>
                                     <td style="width: 9%">{{ event.nama }}</td>
-                                    <td style="width: 14%">{{ event.tanggal_mulai }}</td>
-                                    <td style="width: 15%">{{ event.tanggal_selesai }}</td>
+                                    <td style="width: 14%"><div class="tgl-mulai">{{ event.tanggal_mulai }}</div></td>
+                                    <td style="width: 15%"><div class="tgl-selesai"></div>{{ event.tanggal_selesai }}</td>
                                     <td style="width: 20%"><div class="description">{{ event.deskripsi }}</div></td>
                                     <td style="width: 4%">{{ event.kategori_jadwal }}</td>
                                     {% if user.is_superuser %}

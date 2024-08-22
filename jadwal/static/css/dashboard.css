@@ -579,6 +579,12 @@ body {
     .table td .keterangan {
         width: 200px;
     }
+    .table td .tgl-mulai {
+        width: 150px;
+    }
+    .table td .tgl-selesai {
+        width: 150px;
+    }
     /* Kalender */
     .fc-header-toolbar {
         flex-direction: column; /* Ubah arah menjadi kolom */
