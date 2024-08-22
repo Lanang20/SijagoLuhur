@@ -5,13 +5,29 @@
 5. pip install pillow (untuk penanganan gambar pada python)
 6. pip install Babel (Untuk format tanggal WIB)
 7. Untuk pengaturan database silahkan buka file settings.py
-8. Lakukan migrasi database pada file models.py apabila tidak mengimport database secara manual, abaikan jika sudah mengimport. 
-    Pertama, cd ke SijagoLuhur,
-    Kedua, ketikan "python manage.py makemigrations", 
-    kemudian ketikan "python manage.py migrate",
-    Lalu, buat superuser dengan perintah "python manage.py createsuperuser",
+8. Lakukan migrasi database pada file models.py apabila tidak mengimport database secara manual, 
+    abaikan jika sudah mengimport. 
+        Pertama, cd ke SijagoLuhur,
+        Kedua, ketikan "python manage.py makemigrations", 
+        kemudian ketikan "python manage.py migrate",
+        Lalu, buat superuser dengan perintah "python manage.py createsuperuser",
 9. CD ke SijagoLuhur, jalankan server (python manage.py runserver)
 
 // Form Kontak Pesan di Landing Page
 Silahkan ganti email dan kata sandi aplikasi akun Gmail di bagian file settings.py, 
 untuk penanganan pengiriman email di landing page.
+
+// def event di views.py
+- is_past: Menggunakan Case dan When untuk membuat anotasi is_past 
+yang akan memiliki nilai 1 jika tanggal_mulai event sudah berlalu, dan 0 jika tidak.
+- order_by('is_past', 'status', 'tanggal_mulai'): Mengurutkan event_list terlebih dahulu 
+berdasarkan apakah event tersebut sudah berlalu (is_past), kemudian berdasarkan status, 
+dan akhirnya berdasarkan tanggal_mulai.
+
+Dengan pengaturan ini, acara yang akan datang (tanggal di masa depan) akan muncul di atas, 
+dan acara yang telah berlalu (tanggal di masa lalu) akan muncul di bawah, terurut berdasarkan status dan tanggal_mulai.
+
+// timezone di settings.py
+TIME_ZONE = 'Asia/Jakarta'  # sesuaikan dengan zona waktu Anda
+
+dengan ini, selisih jam yang ada di database (UTC) sebanyak 7 jam dengan data yang ditampilkan di aplikasi.

@@ -133,6 +133,96 @@
             var navbar = document.querySelector('.topbar');
             navbar.classList.toggle('sticky-topbar', window.scrollY > 0);
         });
+
+        // Calendar
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var filterTempat = document.getElementById('filter-tempat');  // Dropdown filter tempat
+            var filterKategori = document.getElementById('filter-kategori');  // Dropdown filter kategori
+            
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,dayGridWeek,listMonth'
+                },
+                dayMaxEventRows: true,
+                views: {
+                    timeGrid: {
+                        dayMaxEventRows: 6
+                    }
+                },
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    var tempatId = filterTempat ? filterTempat.value : null;  // Check if filterTempat exists
+                    var kategoriJadwal = filterKategori.value;  // Ambil nilai kategori
+                    
+                    // Use the base URL for events
+                    var url = '/events/';
+                    var params = new URLSearchParams();
+
+                    // Add tempatId only if filterTempat exists
+                    if (tempatId) {
+                        params.append('tempat_id', tempatId);
+                    }
+
+                    // Add kategoriJadwal if it exists
+                    if (kategoriJadwal) {
+                        params.append('kategori_jadwal', kategoriJadwal);
+                    }
+
+                    fetch(url + '?' + params.toString())
+                        .then(response => response.json())
+                        .then(events => {
+                            events.forEach(event => {
+                                event.color = (event.kategori_jadwal === 'Rutin') ? 'black' : 'red';
+                            });
+                            successCallback(events);
+                        })
+                        .catch(error => failureCallback(error));
+                },
+                eventClick: function(info) {
+                    const place = info.event.extendedProps.place;
+                    const description = info.event.extendedProps.description || '-';
+                    const formattedStart = info.event.extendedProps.formatted_start;
+                    const formattedEnd = info.event.extendedProps.formatted_end;
+                    const kategoriJadwal = info.event.extendedProps.kategori_jadwal;
+
+                    let kategoriHtml = '';
+                    if (kategoriJadwal === 'Rutin') {
+                        kategoriHtml = `<p><strong>Kategori Jadwal:</strong> ${kategoriJadwal}</p>`;
+                    }
+
+                    Swal.fire({
+                        title: info.event.title,
+                        html: `<div style="text-align: left; font-size: 15px;">
+                                    <p><strong>Tempat:</strong> ${place}</p>
+                                    <p><strong>Tanggal & Jam Mulai:</strong> ${formattedStart}</p>
+                                    <p><strong>Tanggal & Jam Selesai:</strong> ${formattedEnd}</p>
+                                    ${kategoriHtml}
+                                    <p style="text-align: justify; white-space: pre-wrap;"><strong>Deskripsi:</strong> ${description}</p>
+                                </div>`,
+                        confirmButtonColor: 'red',
+                    });
+                },
+                // menampilkan waktu
+                displayEventTime: false
+            });
+
+            calendar.render();
+
+            // Re-render calendar ketika tempat atau kategori dipilih/diganti
+            if (filterTempat) {
+                filterTempat.addEventListener('change', function() {
+                    calendar.refetchEvents();
+                    this.blur();  // Remove focus from dropdown
+                });
+            }
+
+            filterKategori.addEventListener('change', function() {
+                calendar.refetchEvents();
+                this.blur();  // Remove focus from dropdown
+            });
+        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" 
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>

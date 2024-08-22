@@ -296,6 +296,11 @@
                             <input type="hidden" name="tanggal_selesai" value="{{ event.tanggal_selesai|date:'Y-m-d' }}">
                             <input type="hidden" name="jam_selesai" value="{{ event.tanggal_selesai|date:'H:i' }}">
                             <input type="hidden" name="deskripsi" value="{{ event.deskripsi }}">
+                            <select id="kategori_jadwal" class="form-select" name="kategori_jadwal" style="display: none;" required>
+                                <option selected disabled>Pilih...</option>
+                                <option value="Rutin" {% if event.kategori_jadwal == 'Rutin' %}selected{% endif %}>Rutin</option>
+                                <option value="Tidak Rutin" {% if event.kategori_jadwal == 'Tidak Rutin' %}selected{% endif %}>Tidak Rutin</option>
+                            </select>
                             <select id="status" class="form-select" name="status" required>
                                 <option selected disabled value="">Pilih...</option>
                                 <option value="Diproses">Diproses</option>

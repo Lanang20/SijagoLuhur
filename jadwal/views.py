@@ -10,6 +10,7 @@ from django.contrib.auth import logout
 from datetime import datetime
 from django.utils.timezone import now, localtime
 from babel.dates import format_datetime
+from django.db.models import Case, When, Value, IntegerField
 
 
 # Create your views here.
@@ -109,12 +110,12 @@ def send_email(request):
 
 @login_required
 def dashboard(request):
-    # Filter event yang akan datang berdasarkan tanggal saat ini
-    upcoming_events = Event.objects.filter(status="disetujui", tanggal_mulai__gt=now()).count()
-    event_diproses = Event.objects.filter(status="diproses").count()
+    # Filter event yang akan datang berdasarkan tanggal saat ini dan jam_mulai
+    upcoming_events = Event.objects.filter(status="Disetujui", tanggal_mulai__gt=now()).count()
+    event_diproses = Event.objects.filter(status="Diproses").count()
     total_tempat = Tempat.objects.all().count()
     total_user = User.objects.all().count()
-    tempat_list = Tempat.objects.all()
+    tempat_list = Tempat.objects.all().order_by('nama')  # Mengurutkan berdasarkan nama tempat
     context = {
         'upcoming_events': upcoming_events,
         'event_diproses': event_diproses,
@@ -234,13 +235,27 @@ def hapus_fasilitas(request, id):
 
 @login_required
 def event(request):
+    current_time = now()
+    
     if request.user.is_superuser:
         # Admin (superuser) bisa melihat semua data
-        event_list = Event.objects.all().order_by('status', 'tanggal_mulai')
+        event_list = Event.objects.annotate(
+            is_past=Case(
+                When(tanggal_mulai__lt=current_time, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField(),
+            )
+        ).order_by('is_past', 'status', 'tanggal_mulai')
         tempat_list = Tempat.objects.all().order_by('nama')  # Ambil semua tempat
     else:
         # Administrator hanya melihat data berdasarkan id_tempat mereka
-        event_list = Event.objects.filter(id_tempat=request.user.id_role.id_tempat).order_by('status', 'tanggal_mulai')
+        event_list = Event.objects.filter(id_tempat=request.user.id_role.id_tempat).annotate(
+            is_past=Case(
+                When(tanggal_mulai__lt=current_time, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField(),
+            )
+        ).order_by('is_past', 'status', 'tanggal_mulai')
         tempat_list = []  # Tidak perlu mengirimkan daftar tempat untuk non-superuser
 
     # Format the date to Indonesian format
