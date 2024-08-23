@@ -79,11 +79,11 @@ WSGI_APPLICATION = "sijago_luhur.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sijago_luhur',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': os.getenv('DJANGO_DB_NAME', 'sijago'),
+        'USER': os.getenv('DJANGO_DB_USER', 'user'),
+        'PASSWORD': os.getenv('DJANGO_DB_PASSWORD', 'password'),
+        'HOST': os.getenv('DJANGO_DB_HOST', 'db'),
+        'PORT': os.getenv('DJANGO_DB_PORT', '3306'),
     }
 }
 
