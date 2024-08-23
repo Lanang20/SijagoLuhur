@@ -31,3 +31,4 @@ dan acara yang telah berlalu (tanggal di masa lalu) akan muncul di bawah, teruru
 TIME_ZONE = 'Asia/Jakarta'  # sesuaikan dengan zona waktu Anda
 
 dengan ini, selisih jam yang ada di database (UTC) sebanyak 7 jam dengan data yang ditampilkan di aplikasi.
+Hal ini berguna untuk fitur upcoming_events di bagian dashboard.

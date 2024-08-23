@@ -439,6 +439,13 @@
             filterKategori.addEventListener('change', function() {
                 calendar.refetchEvents();
             });
+
+            // Menghilangkan focus pada tombol yang sudah diklik, efek penggunaan bootstrap
+            document.querySelectorAll('.fc-button').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    this.blur();
+                });
+            });
         });
 
 
