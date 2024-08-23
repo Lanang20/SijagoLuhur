@@ -1,0 +1,30 @@
+# Gunakan image Python sebagai base image
+FROM python:3.9-slim
+
+# Install dependencies sistem yang diperlukan
+RUN apt-get update && apt-get install -y \
+    libmariadb-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Buat working directory di dalam container
+WORKDIR /app
+
+# Copy requirements.txt jika ada, dan install dependencies Python
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Jika tidak ada requirements.txt, install dependencies langsung
+RUN pip install django mysqlclient pillow Babel
+
+# Copy seluruh isi proyek ke dalam container
+COPY . .
+
+# Menjalankan migrasi database dan mengimpor file SQL
+COPY sijago_luhur.sql /docker-entrypoint-initdb.d/
+
+# Expose port yang digunakan oleh Django
+EXPOSE 8000
+
+# Command untuk menjalankan server Django
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
