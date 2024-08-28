@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: sijagoluhur_db
+    environment:
+      MYSQL_DATABASE: sijago
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sijago_luhur.sql:/docker-entrypoint-initdb.d/sijago_luhur.sql
+    ports:
+      - "3306:3306"
+
+  web:
+    build: .
+    container_name: sijagoluhur_web
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DJANGO_DB_NAME=sijago
+      - DJANGO_DB_USER=user
+      - DJANGO_DB_PASSWORD=password
+      - DJANGO_DB_HOST=db
+      - DJANGO_DB_PORT=3306
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: sijagoluhur_phpmyadmin
+    ports:
+      - "8085:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:
+

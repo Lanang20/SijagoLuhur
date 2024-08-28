@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-vzy57$ei8*_h)yaqc7wsu$6f0*n)_gxsab156h0s)7(t+#@s6#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['10.1.107.41', 'localhost', '127.0.0.1', 'https://sijagoluhur.purbalinggakab.go.id/']
 
 
 # Application definition
@@ -79,11 +79,11 @@ WSGI_APPLICATION = "sijago_luhur.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sijago_luhur',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': os.getenv('DJANGO_DB_NAME', 'sijago'),
+        'USER': os.getenv('DJANGO_DB_USER', 'user'),
+        'PASSWORD': os.getenv('DJANGO_DB_PASSWORD', 'password'),
+        'HOST': os.getenv('DJANGO_DB_HOST', 'db'),
+        'PORT': os.getenv('DJANGO_DB_PORT', '3306'),
     }
 }
 
