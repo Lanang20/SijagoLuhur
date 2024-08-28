@@ -29,7 +29,7 @@ SECRET_KEY = "django-insecure-vzy57$ei8*_h)yaqc7wsu$6f0*n)_gxsab156h0s)7(t+#@s6#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.1.107.41', 'localhost', '127.0.0.1', 'https://sijagoluhur.purbalinggakab.go.id/']
+ALLOWED_HOSTS = ['10.1.107.41', 'localhost', '127.0.0.1', 'sijagoluhur.purbalinggakab.go.id']
 
 
 # Application definition

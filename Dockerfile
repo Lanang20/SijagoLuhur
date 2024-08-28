@@ -15,6 +15,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 RUN pip install django mysqlclient pillow Babel
 
+RUN pip install python-dotenv
+
 COPY . .
 
 COPY sijago_luhur.sql /docker-entrypoint-initdb.d/
